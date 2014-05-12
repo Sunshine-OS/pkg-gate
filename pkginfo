@@ -1,0 +1,10 @@
+PKG=SSOSpkgcmds
+NAME=Sunshine Packaging Tools
+DESC=The Sunshine System's native packaging tools. 
+VENDOR=The Sunshine OS Project
+#HOTLINE=http://heirloom.sourceforge.net
+#EMAIL=gunnarr@acm.org
+VERSION=0.1
+ARCH=x86_64
+CATEGORY=system
+BASEDIR=/
