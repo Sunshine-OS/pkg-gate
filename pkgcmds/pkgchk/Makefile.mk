@@ -32,18 +32,18 @@ $(BIN): ../../libadm/libadm.a ../../libgendb/libgendb.a \
 checkmap.o: checkmap.c ../../hdrs/pkgstrct.h ../../hdrs/pkglocs.h \
   ../../libpkg/pkglib.h ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h \
   ../../libpkg/keystore.h ../../libpkg/cfext.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h
 ckentry.o: ckentry.c ../../hdrs/pkgstrct.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/pkglib.h ../../libpkg/cfext.h
 main.o: main.c ../../hdrs/pkginfo.h ../../hdrs/pkglocs.h \
   ../../hdrs/pkgstrct.h ../../hdrs/pkgtrans.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
-  ../../libpkg/cfext.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
+  ../../libpkg/cfext.h ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h ../../hdrs/install.h \
   ../../hdrs/libinst.h ../../libpkg/cfext.h

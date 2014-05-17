@@ -29,6 +29,6 @@ mrproper: clean
 $(BIN): ../../libadm/libadm.a ../../libgendb/libgendb.a \
 	../../libinst/libinst.a ../../libpkg/libpkgu.a
 
-pkgname.o: pkgname.c ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
+pkgname.o: pkgname.c ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/pkgstrct.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h

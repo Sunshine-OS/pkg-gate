@@ -32,7 +32,7 @@ $(BIN): ../../libadm/libadm.a ../../libgendb/libgendb.a \
 pkginfo.o: pkginfo.c ../../hdrs/pkginfo.h ../../hdrs/pkgstrct.h \
   ../../hdrs/pkglocs.h ../../libpkg/pkglib.h ../../hdrs/pkgdev.h \
   ../../libpkg/pkgerr.h ../../libpkg/keystore.h ../../libpkg/cfext.h \
-  ../../libpkg/dbtables.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
+  ../../libpkg/dbtables.h ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h ../../hdrs/install.h \
   ../../hdrs/libinst.h ../../libpkg/cfext.h \
   ../../libspmizones/spmizones_api.h

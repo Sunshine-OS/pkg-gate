@@ -47,7 +47,7 @@ certs.o: certs.c ../../hdrs/pkglocs.h ../../libpkg/pkglib.h \
   ../../libgendb/genericdb.h ../../hdrs/libinst.h ../../hdrs/pkginfo.h \
   ../../libpkg/pkglib.h ../../libpkg/cfext.h ../../hdrs/install.h \
   pkgadm_msgs.h ../../hdrs/install.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h
 listcert.o: listcert.c pkgadm.h ../../libpkg/pkgerr.h \
   ../../libpkg/keystore.h ../../libpkg/pkgerr.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../hdrs/pkgstrct.h ../../libpkg/keystore.h \

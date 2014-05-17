@@ -30,6 +30,6 @@ mrproper: clean
 
 main.o: main.c ../../hdrs/pkgstrct.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
-  ../../libpkg/cfext.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
+  ../../libpkg/cfext.h ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h ../../hdrs/valtools.h \
   ../../hdrs/install.h ../../hdrs/libinst.h ../../libpkg/cfext.h

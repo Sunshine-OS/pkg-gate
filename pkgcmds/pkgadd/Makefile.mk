@@ -36,7 +36,7 @@ check.o: check.c ../../hdrs/pkgstrct.h ../../hdrs/pkglocs.h \
   ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../hdrs/pkginfo.h ../../libpkg/cfext.h ../../hdrs/install.h \
-  ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h \
+  ../../hdrs/libadm.h ../ ../../hdrs/sys/dklabel.h \
   ../../hdrs/valtools.h ../../hdrs/messages.h
 main.o: main.c ../../hdrs/pkgdev.h ../../hdrs/pkginfo.h \
   ../../hdrs/pkglocs.h ../../hdrs/pkgtrans.h \
@@ -44,13 +44,13 @@ main.o: main.c ../../hdrs/pkgdev.h ../../hdrs/pkginfo.h \
   ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../libpkg/pkgerr.h ../../libpkg/pkgweb.h \
   ../../hdrs/install.h ../../hdrs/libinst.h ../../libpkg/cfext.h \
-  ../../hdrs/install.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
+  ../../hdrs/install.h ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h ../../hdrs/messages.h \
   quit.h
 quit.o: quit.c ../../hdrs/pkgdev.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../libpkg/pkgweb.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h ../../hdrs/messages.h quit.h \
   ../../libspmizones/spmizones_api.h

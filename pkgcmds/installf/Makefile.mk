@@ -35,24 +35,24 @@ dofinal.o: dofinal.c ../../hdrs/pkgstrct.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../hdrs/pkginfo.h ../../libpkg/cfext.h ../../hdrs/install.h \
-  ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h \
+  ../../hdrs/libadm.h ../ ../../hdrs/sys/dklabel.h \
   ../../hdrs/valtools.h
 installf.o: installf.c ../../hdrs/pkgstrct.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../hdrs/pkginfo.h ../../libpkg/cfext.h ../../hdrs/install.h \
-  ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h \
+  ../../hdrs/libadm.h ../ ../../hdrs/sys/dklabel.h \
   ../../hdrs/valtools.h installf.h
 main.o: main.c ../../hdrs/pkginfo.h ../../hdrs/pkgstrct.h \
   ../../hdrs/pkglocs.h ../../libspmizones/spmizones_api.h \
   ../../libpkg/pkglib.h ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h \
   ../../libpkg/keystore.h ../../libpkg/cfext.h ../../hdrs/install.h \
-  ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h \
+  ../../hdrs/libadm.h ../ ../../hdrs/sys/dklabel.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h installf.h
 removef.o: removef.c ../../libpkg/pkglib.h ../../hdrs/pkgdev.h \
   ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../hdrs/pkginfo.h ../../libpkg/cfext.h ../../hdrs/install.h \
-  ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h \
+  ../../hdrs/libadm.h ../ ../../hdrs/sys/dklabel.h \
   ../../hdrs/valtools.h installf.h

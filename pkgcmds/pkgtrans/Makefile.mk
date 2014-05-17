@@ -32,6 +32,6 @@ $(BIN): ../../libadm/libadm.a ../../libgendb/libgendb.a \
 main.o: main.c ../../hdrs/pkgtrans.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h \
   ../../libpkg/keystore.h ../../libpkg/cfext.h ../../libpkg/pkglibmsgs.h \
-  ../../hdrs/pkglocs.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
+  ../../hdrs/pkglocs.h ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h ../../hdrs/valtools.h \
   ../../hdrs/install.h ../../hdrs/libinst.h ../../libpkg/cfext.h

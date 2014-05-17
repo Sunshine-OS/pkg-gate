@@ -36,7 +36,7 @@
 #define	__PKG_LIBADM_H__
 
 #include <sys/types.h>
-#include <sys/vtoc.h>
+#include <sys/dklabel.h>
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <time.h>
@@ -322,12 +322,6 @@ extern void	putprmpt __P((FILE *fp, char *prompt, char *choices[],
  * puttext.c
  */
 extern int	puttext __P((FILE *fp, char *str, int lmarg, int rmarg));
-
-/*
- * rdwr_vtoc.c
- */
-extern int	read_vtoc __P((int fd, struct vtoc *vtoc));
-extern int	write_vtoc __P((int fd, struct vtoc *vtoc));
 
 /*
  * from OpenSolaris libc

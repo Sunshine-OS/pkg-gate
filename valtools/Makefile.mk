@@ -166,39 +166,39 @@ clean:
 
 mrproper: clean
 
-ckdate.o: ckdate.c usage.h ../hdrs/libadm.h ../hdrs/sys/vtoc.h \
+ckdate.o: ckdate.c usage.h ../hdrs/libadm.h  \
   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h ../hdrs/pkginfo.h \
   ../hdrs/valtools.h ../hdrs/install.h
-ckgid.o: ckgid.c usage.h ../hdrs/libadm.h ../hdrs/sys/vtoc.h \
+ckgid.o: ckgid.c usage.h ../hdrs/libadm.h  \
   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h ../hdrs/pkginfo.h \
   ../hdrs/valtools.h ../hdrs/install.h
-ckint.o: ckint.c usage.h ../hdrs/libadm.h ../hdrs/sys/vtoc.h \
+ckint.o: ckint.c usage.h ../hdrs/libadm.h  \
   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h ../hdrs/pkginfo.h \
   ../hdrs/valtools.h ../hdrs/install.h
 ckitem.o: ckitem.c ../hdrs/valtools.h usage.h ../hdrs/libadm.h \
-  ../hdrs/sys/vtoc.h ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h \
+   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h \
   ../hdrs/pkginfo.h ../hdrs/install.h
-ckkeywd.o: ckkeywd.c usage.h ../hdrs/libadm.h ../hdrs/sys/vtoc.h \
+ckkeywd.o: ckkeywd.c usage.h ../hdrs/libadm.h  \
   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h ../hdrs/pkginfo.h \
   ../hdrs/valtools.h ../hdrs/install.h
 ckpath.o: ckpath.c ../hdrs/valtools.h usage.h ../hdrs/libadm.h \
-  ../hdrs/sys/vtoc.h ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h \
+   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h \
   ../hdrs/pkginfo.h ../hdrs/install.h
-ckrange.o: ckrange.c usage.h ../hdrs/libadm.h ../hdrs/sys/vtoc.h \
+ckrange.o: ckrange.c usage.h ../hdrs/libadm.h  \
   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h ../hdrs/pkginfo.h \
   ../hdrs/valtools.h ../hdrs/install.h
-ckstr.o: ckstr.c usage.h ../hdrs/libadm.h ../hdrs/sys/vtoc.h \
+ckstr.o: ckstr.c usage.h ../hdrs/libadm.h  \
   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h ../hdrs/pkginfo.h \
   ../hdrs/valtools.h ../hdrs/install.h
-cktime.o: cktime.c usage.h ../hdrs/libadm.h ../hdrs/sys/vtoc.h \
+cktime.o: cktime.c usage.h ../hdrs/libadm.h  \
   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h ../hdrs/pkginfo.h \
   ../hdrs/valtools.h ../hdrs/install.h
-ckuid.o: ckuid.c usage.h ../hdrs/libadm.h ../hdrs/sys/vtoc.h \
+ckuid.o: ckuid.c usage.h ../hdrs/libadm.h  \
   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h ../hdrs/pkginfo.h \
   ../hdrs/valtools.h ../hdrs/install.h
-ckyorn.o: ckyorn.c usage.h ../hdrs/libadm.h ../hdrs/sys/vtoc.h \
+ckyorn.o: ckyorn.c usage.h ../hdrs/libadm.h  \
   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h ../hdrs/pkginfo.h \
   ../hdrs/valtools.h ../hdrs/install.h
-puttext.o: puttext.c ../hdrs/libadm.h ../hdrs/sys/vtoc.h \
+puttext.o: puttext.c ../hdrs/libadm.h  \
   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h ../hdrs/pkginfo.h \
   ../hdrs/valtools.h ../hdrs/install.h

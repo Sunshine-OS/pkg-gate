@@ -38,6 +38,6 @@ main.o: main.c ../../hdrs/sys/mnttab.h ../../hdrs/sys/mntent.h \
   ../../hdrs/pkgdev.h ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h \
   ../../libpkg/keystore.h ../../libpkg/cfext.h ../../hdrs/install.h \
   ../../hdrs/libinst.h ../../hdrs/pkginfo.h ../../libpkg/cfext.h \
-  ../../hdrs/install.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
+  ../../hdrs/install.h ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h ../../hdrs/messages.h \
   pkgcond.h pkgcond_msgs.h

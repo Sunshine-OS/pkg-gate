@@ -32,12 +32,12 @@ $(BIN): ../../libadm/libadm.a ../../libgendb/libgendb.a \
 check.o: check.c ../../hdrs/pkgstrct.h ../../hdrs/install.h \
   ../../libpkg/pkglib.h ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h \
   ../../libpkg/keystore.h ../../libpkg/cfext.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h wsreg_pkgrm.h ../../hdrs/messages.h
 delmap.o: delmap.c ../../hdrs/pkgstrct.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
-  ../../libpkg/cfext.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
+  ../../libpkg/cfext.h ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h ../../hdrs/valtools.h \
   ../../hdrs/install.h ../../hdrs/libinst.h ../../libpkg/cfext.h
 main.o: main.c ../../hdrs/pkgstrct.h ../../hdrs/pkginfo.h \
@@ -45,12 +45,12 @@ main.o: main.c ../../hdrs/pkgstrct.h ../../hdrs/pkginfo.h \
   ../../libspmizones/spmizones_api.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/libinst.h \
-  ../../hdrs/install.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
+  ../../hdrs/install.h ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h ../../hdrs/messages.h
 quit.o: quit.c ../../libpkg/pkglib.h ../../hdrs/pkgdev.h \
   ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h ../../hdrs/messages.h
 special.o: special.c ../../hdrs/pkgstrct.h ../../libpkg/pkglib.h \

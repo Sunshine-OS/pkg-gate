@@ -37,26 +37,26 @@ backup.o: backup.c ../../libpkg/pkglib.h ../../hdrs/pkgdev.h \
 check.o: check.c ../../hdrs/pkgstrct.h ../../hdrs/pkglocs.h \
   ../../hdrs/install.h ../../libpkg/pkglib.h ../../hdrs/pkgdev.h \
   ../../libpkg/pkgerr.h ../../libpkg/keystore.h ../../libpkg/cfext.h \
-  ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h \
+  ../../hdrs/libadm.h ../ ../../hdrs/sys/dklabel.h \
   ../../hdrs/pkginfo.h ../../hdrs/valtools.h ../../hdrs/install.h \
   ../../hdrs/libinst.h ../../libpkg/cfext.h pkginstall.h
 cppath.o: cppath.c ../../hdrs/pkglocs.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h \
   ../../libpkg/keystore.h ../../libpkg/cfext.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/messages.h \
   pkginstall.h
 dockspace.o: dockspace.c ../../hdrs/pkgstrct.h ../../hdrs/install.h \
   ../../libpkg/pkglib.h ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h \
   ../../libpkg/keystore.h ../../libpkg/cfext.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h pkginstall.h
 getinst.o: getinst.c ../../hdrs/valtools.h ../../hdrs/pkginfo.h \
   ../../hdrs/install.h ../../hdrs/pkgstrct.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
-  ../../libpkg/cfext.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
+  ../../libpkg/cfext.h ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h pkginstall.h ../../hdrs/messages.h
 instvol.o: instvol.c ../../hdrs/pkgstrct.h ../../hdrs/pkgdev.h \
@@ -67,7 +67,7 @@ instvol.o: instvol.c ../../hdrs/pkgstrct.h ../../hdrs/pkgdev.h \
   ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libgendb/genericdb.h ../../hdrs/libinst.h ../../hdrs/pkginfo.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/install.h \
-  ../../hdrs/libinst.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
+  ../../hdrs/libinst.h ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h ../../hdrs/dryrun.h \
   ../../hdrs/messages.h pkginstall.h
 main.o: main.c ../../hdrs/pkgstrct.h ../../hdrs/pkginfo.h \
@@ -76,50 +76,50 @@ main.o: main.c ../../hdrs/pkgstrct.h ../../hdrs/pkginfo.h \
   ../../libpkg/pkgerr.h ../../libpkg/keystore.h ../../libpkg/cfext.h \
   ../../libpkg/pkgweb.h ../../libpkg/pkglocale.h ../../hdrs/install.h \
   ../../hdrs/libinst.h ../../libpkg/cfext.h ../../hdrs/install.h \
-  ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h \
+  ../../hdrs/libadm.h ../ ../../hdrs/sys/dklabel.h \
   ../../hdrs/valtools.h ../../hdrs/dryrun.h ../../hdrs/messages.h \
   pkginstall.h
 merginfo.o: merginfo.c ../../libpkg/pkglib.h ../../hdrs/pkgdev.h \
   ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/pkglib.h ../../libpkg/cfext.h pkginstall.h \
   ../../hdrs/messages.h
 pkgenv.o: pkgenv.c ../../hdrs/pkgstrct.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h
 pkgvolume.o: pkgvolume.c ../../hdrs/pkgdev.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
-  ../../libpkg/cfext.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
+  ../../libpkg/cfext.h ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h ../../hdrs/valtools.h \
   ../../hdrs/install.h ../../hdrs/libinst.h ../../libpkg/cfext.h
 quit.o: quit.c ../../hdrs/pkgdev.h ../../hdrs/pkglocs.h \
   ../../libpkg/pkglib.h ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h \
   ../../libpkg/keystore.h ../../libpkg/cfext.h ../../hdrs/install.h \
   ../../hdrs/dryrun.h ../../libpkg/cfext.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h pkginstall.h ../../hdrs/messages.h
 reqexec.o: reqexec.c ../../libpkg/pkglib.h ../../hdrs/pkgdev.h \
   ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h pkginstall.h ../../hdrs/messages.h
 sortmap.o: sortmap.c ../../hdrs/pkgstrct.h ../../hdrs/pkglocs.h \
   ../../hdrs/install.h ../../libpkg/pkglib.h ../../hdrs/pkgdev.h \
   ../../libpkg/pkgerr.h ../../libpkg/keystore.h ../../libpkg/cfext.h \
-  ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h \
+  ../../hdrs/libadm.h ../ ../../hdrs/sys/dklabel.h \
   ../../hdrs/pkginfo.h ../../hdrs/valtools.h ../../hdrs/install.h \
   ../../hdrs/libinst.h ../../libpkg/cfext.h
 special.o: special.c ../../hdrs/pkgstrct.h ../../hdrs/pkginfo.h \
   ../../hdrs/pkgdev.h ../../hdrs/pkglocs.h ../../libpkg/pkglib.h \
   ../../libpkg/pkgerr.h ../../libpkg/keystore.h ../../libpkg/cfext.h \
   ../../libpkg/dbsql.h ../../libgendb/genericdb.h ../../hdrs/libadm.h \
-  ../../hdrs/sys/vtoc.h ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h \
+  ../ ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h \
   ../../hdrs/install.h ../../hdrs/libinst.h ../../libpkg/cfext.h \
   ../../hdrs/dryrun.h pkginstall.h ../../hdrs/messages.h
