@@ -153,13 +153,8 @@ gpkgmap(struct cfent *ept, FILE *fp)
 	ept->ainfo.mode = d_mode;
 	(void) strcpy(ept->ainfo.owner, d_owner);
 	(void) strcpy(ept->ainfo.group, d_group);
-#ifdef SUNOS41
-	ept->ainfo.xmajor = BADMAJOR;
-	ept->ainfo.xminor = BADMINOR;
-#else
 	ept->ainfo.major = BADMAJOR;
 	ept->ainfo.minor = BADMINOR;
-#endif
 	ept->cinfo.cksum = ept->cinfo.modtime = ept->cinfo.size = (-1L);
 
 	ept->npkgs = 0;
@@ -300,17 +295,10 @@ error:
 	}
 
 	if (strchr("cb", ept->ftype)) {
-#ifdef SUNOS41
-		ept->ainfo.xmajor = BADMAJOR;
-		ept->ainfo.xminor = BADMINOR;
-		if (getnum(fp, 10, (long *)&ept->ainfo.xmajor, BADMAJOR) ||
-		    getnum(fp, 10, (long *)&ept->ainfo.xminor, BADMINOR))
-#else
 		ept->ainfo.major = BADMAJOR;
 		ept->ainfo.minor = BADMINOR;
 		if (getnum(fp, 10, (long *)&ept->ainfo.major, BADMAJOR) ||
 		    getnum(fp, 10, (long *)&ept->ainfo.minor, BADMINOR))
-#endif
 		{
 			setErrstr(pkg_gt(ERR_CANNOT_READ_MM_DEVNUMS));
 			goto error;

@@ -491,11 +491,7 @@ ds_init(char *device, char **pkg, char *norewind)
 		return (-1);
 	}
 	/* this could break, thanks to cpio command limit */
-#ifndef SUNOS41
 	(void) sprintf(cmd, "%s -icdumD -C %d", CPIOPROC, (int)BLK_SIZE);
-#else
-	(void) sprintf(cmd, "%s -icdum -C %d", CPIOPROC, (int)BLK_SIZE);
-#endif
 	n = 0;
 	for (i = 0; pkg[i]; i++) {
 		if (strcmp(pkg[i], "all") == 0)
@@ -614,13 +610,9 @@ ds_getpkg(char *device, int n, char *dstdir)
 			logerr(pkg_gt(MSG_STATFS), errno);
 			return (-1);
 		}
-#ifdef SUNOS41
-		free_blocks = svfsb.f_bfree * howmany(svfsb.f_bsize, DEV_BSIZE);
-#else	/* !SUNOS41 */
 		free_blocks = (((long)svfsb.f_frsize > 0) ?
 			    howmany(svfsb.f_frsize, DEV_BSIZE) :
 			    howmany(svfsb.f_bsize, DEV_BSIZE)) * svfsb.f_bfree;
-#endif	/* SUNOS41 */
 		if ((ds_maxsiz + 50) > free_blocks) {
 			progerr(pkg_gt(ERR_UNPACK));
 			logerr(pkg_gt(MSG_NOSPACE), ds_maxsiz+50, free_blocks);
@@ -665,11 +657,7 @@ ds_skip(char *device, int nskip)
 
 	while (nskip--) {
 		/* skip this one */
-#ifndef SUNOS41
 		(void) sprintf(cmd, "%s -ictD -C %d > /dev/null",
-#else
-		(void) sprintf(cmd, "%s -ict -C %d > /dev/null",
-#endif
 		    CPIOPROC, (int)BLK_SIZE);
 		if (n = esystem(cmd, ds_fd, -1)) {
 			rpterr();
@@ -712,11 +700,7 @@ ds_next(char *device, char *instdir)
 			(void) strcpy(ds_volnos, tmpvol);
 			ds_curpartcnt += index;
 		}
-#ifndef SUNOS41
 		(void) sprintf(cmd, "%s -icdumD -C %d",
-#else
-		(void) sprintf(cmd, "%s -icdum -C %d",
-#endif
 		    CPIOPROC, (int)BLK_SIZE);
 		if (n = esystem(cmd, ds_fd, -1)) {
 			rpterr();

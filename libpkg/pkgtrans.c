@@ -1151,26 +1151,16 @@ wdsheader(struct dm_buf *hdr, char *src, char *device, char **pkg, PKCS7 *sig)
 	(void) lseek(list_fd, 0, SEEK_SET);
 
 	if (!making_sig) {
-#ifndef SUNOS41
 		(void) sprintf(tmp_entry, "%s -ocD -C %d",
 		    CPIOPROC, (int)BLK_SIZE);
-#else
-		(void) sprintf(tmp_entry, "%s -oc -C %d",
-		    CPIOPROC, (int)BLK_SIZE);
-#endif
 	} else {
 		/*
 		 * when making a signature, we must make sure to follow
 		 * symlinks during the cpio so that we don't archive
 		 * the links themselves
 		 */
-#ifndef SUNOS41
 		(void) sprintf(tmp_entry, "%s -ocDL -C %d",
 		    CPIOPROC, (int)BLK_SIZE);
-#else
-		(void) sprintf(tmp_entry, "%s -ocL -C %d",
-		    CPIOPROC, (int)BLK_SIZE);
-#endif
 	}
 
 	if (making_sig) {
@@ -1594,13 +1584,8 @@ pkgxfer(char *srcinst, int options)
 			}
 		}
 		if (options & PT_ODTSTREAM) {
-#ifndef SUNOS41
 			(void) sprintf(cmd+strlen(cmd),
 			    " -print | %s -ocD -C %d",
-#else
-			(void) sprintf(cmd+strlen(cmd),
-			    " -print | %s -oc -C %d",
-#endif
 				CPIOPROC, (int)BLK_SIZE);
 		} else {
 			if (statvfs(dstdir, &svfsb) == -1) {
@@ -1826,13 +1811,8 @@ pkgdump(char *srcinst, BIO *bio)
 			}
 		}
 
-#ifndef SUNOS41
 		(void) sprintf(cmd+strlen(cmd),
 		    " -print | %s -ocD -C %d",
-#else
-		    (void) sprintf(cmd+strlen(cmd),
-			" -print | %s -oc -C %d",
-#endif
 			CPIOPROC, (int)BLK_SIZE);
 		/*
 		 * execute the command, dumping all standard output

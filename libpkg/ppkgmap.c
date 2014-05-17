@@ -78,15 +78,6 @@ ppkgmap(struct cfent *ept, FILE *fp)
 	}
 
 	if (strchr("cb", ept->ftype)) {
-#ifdef SUNOS41
-		if (ept->ainfo.xmajor == BADMAJOR) {
-			if (fprintf(fp, " ?") < 0)
-				return (-1);
-		} else {
-			if (fprintf(fp, " %d", ept->ainfo.xmajor) < 0)
-				return (-1);
-		}
-#else
 		if (ept->ainfo.major == BADMAJOR) {
 			if (fprintf(fp, " ?") < 0)
 				return (-1);
@@ -94,16 +85,6 @@ ppkgmap(struct cfent *ept, FILE *fp)
 			if (fprintf(fp, " %d", (int)ept->ainfo.major) < 0)
 				return (-1);
 		}
-#endif
-#ifdef SUNOS41
-		if (ept->ainfo.xminor == BADMINOR) {
-			if (fprintf(fp, " ?") < 0)
-				return (-1);
-		} else {
-			if (fprintf(fp, " %d", ept->ainfo.xminor) < 0)
-				return (-1);
-		}
-#else
 		if (ept->ainfo.minor == BADMINOR) {
 			if (fprintf(fp, " ?") < 0)
 				return (-1);
@@ -111,7 +92,6 @@ ppkgmap(struct cfent *ept, FILE *fp)
 			if (fprintf(fp, " %d", (int)ept->ainfo.minor) < 0)
 				return (-1);
 		}
-#endif
 	}
 
 	if (strchr("dxcbpfve", ept->ftype)) {

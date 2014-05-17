@@ -138,9 +138,6 @@ main(int argc, char *argv[])
 	(void) signal(SIGQUIT, trap);
 	(void) signal(SIGTERM, trap);
 	(void) signal(SIGPIPE, trap);
-#ifndef SUNOS41
-	//(void) signal(SIGPWR, trap);
-#endif
 
 	if ((argc-optind) < 2) {
 		usage();

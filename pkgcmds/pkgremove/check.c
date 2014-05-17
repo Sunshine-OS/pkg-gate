@@ -39,9 +39,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#ifndef SUNOS41
 #include <utmpx.h>
-#endif
 #include <dirent.h>
 #include <sys/types.h>
 #include <pkgstrct.h>

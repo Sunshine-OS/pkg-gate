@@ -683,11 +683,7 @@ averify(int fix, char *ftype, char *path, struct ainfo *ainfo)
 				}
 
 				if (mknod(path, ainfo->mode | S_IFCHR,
-#ifdef SUNOS41
-				    makedev(ainfo->xmajor, ainfo->xminor)) ||
-#else
 				    makedev(ainfo->major, ainfo->minor)) ||
-#endif
 				    (stat(path, &status) < 0)) {
 					reperr(pkg_gt(ERR_CDEVFAIL));
 					return (VE_FAIL);
@@ -717,11 +713,7 @@ averify(int fix, char *ftype, char *path, struct ainfo *ainfo)
 				}
 
 				if (mknod(path, ainfo->mode | S_IFBLK,
-#ifdef SUNOS41
-				    makedev(ainfo->xmajor, ainfo->xminor)) ||
-#else
 				    makedev(ainfo->major, ainfo->minor)) ||
-#endif
 				    (stat(path, &status) < 0)) {
 					reperr(pkg_gt(ERR_BDEVFAIL));
 					return (VE_FAIL);
@@ -746,19 +738,6 @@ averify(int fix, char *ftype, char *path, struct ainfo *ainfo)
 
 	retcode = 0;
 	if ((myftype == 'c') || (myftype == 'b')) {
-#ifdef SUNOS41
-		if (setval || (ainfo->xmajor < 0))
-			ainfo->xmajor = ((status.st_rdev>>8)&0377);
-		if (setval || (ainfo->xminor < 0))
-			ainfo->xminor = (status.st_rdev&0377);
-		/* check major & minor */
-		if (status.st_rdev != makedev(ainfo->xmajor, ainfo->xminor)) {
-			reperr(pkg_gt(ERR_MAJMIN), ainfo->xmajor,
-			    ainfo->xminor,
-				(status.st_rdev>>8)&0377, status.st_rdev&0377);
-			retcode = VE_CONT;
-		}
-#else
 		if (setval || (ainfo->major == BADMAJOR))
 			ainfo->major = major(status.st_rdev);
 		if (setval || (ainfo->minor == BADMINOR))
@@ -769,7 +748,6 @@ averify(int fix, char *ftype, char *path, struct ainfo *ainfo)
 			    major(status.st_rdev), minor(status.st_rdev));
 			retcode = VE_CONT;
 		}
-#endif
 	}
 
 	/* compare specified mode w/ actual mode excluding sticky bit */

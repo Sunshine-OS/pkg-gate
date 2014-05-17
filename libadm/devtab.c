@@ -71,7 +71,7 @@
 
 //#include	<sys/sysmacros.h>
 #include	<sys/types.h>
-#if defined (__sun) && !defined (SUNOS41)
+#if defined (__sun)
 #include	<sys/mkdev.h>
 #endif
 #include	<unistd.h>
