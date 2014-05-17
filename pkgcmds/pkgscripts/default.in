@@ -30,7 +30,7 @@
 # Sccsid @(#)default.in	1.2 (gritter) 2/24/07
 #
 mail=
-instance=unique
+instance=overwrite
 partial=ask
 runlevel=ask
 idepend=ask
