@@ -50,19 +50,11 @@
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <fcntl.h>
-#ifdef u3b2
-#include <sys/sys3b.h>
-#endif	/* u3b2 */
 #include <openssl/err.h>
 #include <pkglib.h>
 #include <pkglibmsgs.h>
 #include "pkglocale.h"
 #include "libadm.h"
-#ifdef u3b2
-static
-struct stat	orig_st_buf; /* Stat structure of original file (3B2/CTC) */
-static char	ds_ctcflg;
-#endif	/* u3b2 */
 
 #ifdef __FreeBSD__ 
 	#define O_LARGEFILE 0 
@@ -844,17 +836,6 @@ BIO_ds_dump_header(PKG_ERR *err, BIO *bio)
 int
 ds_ginit(char *device)
 {
-#ifdef u3b2
-	major_t maj;
-	minor_t min;
-	int nflag, i, count, size;
-	struct s3bconf *buffer;
-	struct s3bc *table;
-	struct stat st_buf;
-	int devtype;
-	char buf[BLK_SIZE];
-	int fd2, fd;
-#endif	/* u3b2 */
 	int oflag;
 	char *pbufsize, cmd[CMDSIZ];
 	int fd2, fd;
@@ -865,104 +846,6 @@ ds_ginit(char *device)
 	} else
 		ds_bufsize = BLK_SIZE;
 	oflag = fcntl(ds_fd, F_GETFL, 0);
-#ifdef u3b2
-	devtype = G_NO_DEV;
-	if (fstat(ds_fd, &st_buf) == -1)
-		return (-1);
-	if (!S_ISCHR(st_buf.st_mode) && !S_ISBLK(st_buf.st_mode))
-		goto lab;
-
-	/*
-	 * We'll have to add a remote attribute to stat but this should
-	 * work for now.
-	 */
-	else if (st_buf.st_dev & 0x8000)	/* if remote  rdev */
-		goto lab;
-
-	maj = major(st_buf.st_rdev);
-	min = minor(st_buf.st_rdev);
-	if (maj == 0x11) { /* internal hard or floppy disk */
-		if (min & 0x80)
-			devtype = G_3B2_FD; /* internal floppy disk */
-		else
-			devtype = G_3B2_HD; /* internal hard disk */
-	} else {
-		if (sys3b(S3BCONF, (struct s3bconf *)&count, sizeof (count)) ==
-		    -1)
-			return (-1);
-		size = sizeof (int) + (count * sizeof (struct s3bconf));
-		buffer = (struct s3bconf *)malloc((unsigned)size);
-		if (sys3b(S3BCONF, buffer, size) == -1)
-			return (-1);
-		table = (struct s3bc *)((char *)buffer + sizeof (int));
-		for (i = 0; i < count; i++) {
-			if (maj == (int)table->board) {
-				if (strncmp(table->name, "CTC", 3) == 0) {
-					devtype = G_3B2_CTC;
-					break;
-				} else if (strncmp(table->name, "TAPE", 4)
-						== 0) {
-					devtype = G_TAPE;
-					break;
-				}
-				/* other possible devices can go here */
-			}
-			table++;
-		}
-	}
-	switch (devtype) {
-		case G_3B2_CTC:	/* do special CTC initialization */
-			ds_bufsize = pbufsize ? ds_bufsize : 15872;
-			if (fstat(ds_fd, &orig_st_buf) < 0) {
-				ds_bufsize = -1;
-				break;
-			}
-			nflag = (O_RDWR | O_CTSPECIAL);
-			(void) close(ds_fd);
-			if ((ds_fd = open(device, nflag, 0666)) != -1) {
-				if (ioctl(ds_fd, STREAMON) != -1) {
-					(void) close(ds_fd);
-					nflag = (oflag == O_WRONLY) ?
-					    O_WRONLY : O_RDONLY;
-					if ((ds_fd =
-					    open(device, nflag, 0666)) == -1) {
-						rpterr();
-						progerr(
-						    pkg_gt(ERR_TRANSFER));
-						logerr(pkg_gt(MSG_OPEN),
-						    device, errno);
-						return (-1);
-					}
-					ds_bufsize = 15872;
-				}
-			} else
-				ds_bufsize = -1;
-			if (oflag == O_RDONLY && ds_header && ds_totread == 0)
-				/* Have already read in first block of header */
-				read(ds_fd, buf, BLK_SIZE);
-			ds_ctcflg = 1;
-
-			break;
-		case G_NO_DEV:
-		case G_3B2_HD:
-		case G_3B2_FD:
-		case G_TAPE:
-		case G_SCSI_HD: /* not developed yet */
-		case G_SCSI_FD:
-		case G_SCSI_9T:
-		case G_SCSI_Q24:
-		case G_SCSI_Q120:
-		case G_386_HD:
-		case G_386_FD:
-		case G_386_Q24:
-			ds_bufsize = pbufsize ? ds_bufsize : BLK_SIZE;
-			break;
-		default:
-			ds_bufsize = -1;
-			errno = ENODEV;
-	} /* devtype */
-lab:
-#endif	/* u3b2 */
 	if (ds_bufsize > BLK_SIZE) {
 		if (oflag & O_WRONLY)
 			fd = 1;
@@ -994,42 +877,8 @@ lab:
 int
 ds_close(int pkgendflg)
 {
-#ifdef u3b2
-	int cnt, mode;
-	char *ptr;
-	struct stat statbuf;
-#endif	/* u3b2 */
 	int n, ret = 0;
 
-#ifdef u3b2
-	if (ds_pp && ds_ctcflg) {
-		ds_ctcflg = 0;
-		if ((mode = fcntl(ds_realfd, F_GETFL, 0)) < 0) {
-			ret = -1;
-		} else if (mode & O_WRONLY) {
-		/*
-		 * pipe to dd write process,
-		 * make sure one more buffer
-		 * gets written out
-		 */
-			if ((ptr = calloc(BLK_SIZE, 1)) == NULL) {
-				ret = -1;
-			/* pad to bufsize */
-			} else {
-				cnt = ds_bufsize;
-				while (cnt > 0) {
-					if ((n = write(ds_fd, ptr,
-					    BLK_SIZE)) < 0) {
-						ret = -1;
-						break;
-					}
-					cnt -= n;
-				}
-				(void) free(ptr);
-			}
-		}
-	}
-#endif
 	if (pkgendflg) {
 		if (ds_header)
 			(void) free(ds_header);
