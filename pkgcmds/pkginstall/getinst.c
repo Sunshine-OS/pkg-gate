@@ -52,7 +52,7 @@
 
 extern struct admin adm;
 extern char	*pkgarch, *pkgvers, *msgtext, *pkgabrv;
-extern int	opresvr4, maxinst;
+extern int	maxinst;
 
 static char	newinst[PKGSIZ];
 static char	*nextinst(void);
@@ -135,7 +135,7 @@ getinst(int *updatingExisting, struct pkginfo *info, int npkgs,
 			(void) fprintf(stdout, "ckinstance=0\n");
 		}
 
-		inst = sameinst; /* can't be overwriting a pre-svr4 package */
+		inst = sameinst;
 		same_pkg++;
 		(*updatingExisting)++;
 		return (inst);
@@ -162,9 +162,6 @@ getinst(int *updatingExisting, struct pkginfo *info, int npkgs,
 		}
 
 		inst = info[samearch].pkginst;
-		if (info[samearch].status == PI_PRESVR4) {
-			opresvr4++; /* overwriting a pre-svr4 package */
-		}
 
 		(*updatingExisting)++;
 		return (inst);
@@ -205,16 +202,6 @@ getinst(int *updatingExisting, struct pkginfo *info, int npkgs,
 	}
 
 	(*updatingExisting)++;
-
-	/* see if this instance is presvr4 */
-	for (i = 0; i < npkgs; i++) {
-		if (strcmp(inst, info[i].pkginst) == 0) {
-			if (info[i].status == PI_PRESVR4) {
-				opresvr4++;
-			}
-			break;
-		}
-	}
 
 	return (inst);
 }

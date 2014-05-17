@@ -38,7 +38,6 @@
 extern "C" {
 #endif
 
-#define	PKGOLD	"/usr/options"
 #define	PKGLOC	VSADMDIR "/pkg"
 #define	PKGADM	VSADMDIR "/install"
 #define	PKGBIN	SADMDIR "/install/bin"

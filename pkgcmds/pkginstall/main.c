@@ -160,7 +160,6 @@ int		ireboot = 0;
 int		maxinst = 1;
 int		nocnflct;
 int		nosetuid;
-int		opresvr4 = 0;
 int		pkgverbose = 0;
 int		rprcflag;
 int		warnflag = 0;
@@ -2048,19 +2047,6 @@ main(int argc, char *argv[])
 		/*NOTREACHED*/
 	}
 
-	if (opresvr4) {
-		/*
-		 * we are overwriting a pre-svr4 package, so remove the file
-		 * in /usr/options now
-		 */
-		(void) snprintf(path, sizeof (path),
-			"%s/%s.name", get_PKGOLD(), pkginst);
-		if (remove(path) && (errno != ENOENT)) {
-			progerr(ERR_OPRESVR4, path);
-			warnflag++;
-		}
-	}
-
 	/*
 	 * Execute preinstall script, if one was provided with the
 	 * package. We check the package to avoid running an old
@@ -2226,8 +2212,6 @@ main(int argc, char *argv[])
 	}
 
 	if (!warnflag && !failflag) {
-		if (pt = getenv("PREDEPEND"))
-			predepend(pt);
 		(void) remove(rlockfile);
 		(void) remove(ilockfile);
 		(void) remove(savlog);

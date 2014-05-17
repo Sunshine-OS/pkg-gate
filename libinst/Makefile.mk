@@ -8,7 +8,7 @@ OBJ = copyf.o cvtpath.o depchk.o dockdeps.o doulimit.o dryrun.o echo.o \
 	eptstat.o finalck.o findscripts.o fixpath.o flex_dev.o \
 	is_local_host.o isreloc.o listmgr.o lockinst.o log.o mntinfo.o \
 	nblk.o ocfile.o open_package_datastream.o pathdup.o pkgdbmerg.o \
-	pkgobjmap.o pkgops.o pkgpatch.o procmap.o psvr4ck.o ptext.o \
+	pkgobjmap.o pkgops.o pkgpatch.o procmap.o ptext.o \
 	putparam.o qreason.o qstrdup.o setadmin.o setlist.o \
 	setup_temporary_directory.o sml.o srcpath.o stub.o \
 	unpack_package_from_stream.o scriptvfy.o \
@@ -150,11 +150,6 @@ procmap.o: procmap.c ../hdrs/pkgstrct.h ../libpkg/pkglib.h \
   ../hdrs/pkgdev.h ../libpkg/pkgerr.h ../libpkg/keystore.h \
   ../libpkg/cfext.h ../hdrs/install.h ../hdrs/libinst.h ../hdrs/pkginfo.h \
   ../libpkg/cfext.h ../hdrs/install.h
-psvr4ck.o: psvr4ck.c ../libpkg/pkglib.h ../hdrs/pkgdev.h \
-  ../hdrs/pkgstrct.h ../libpkg/pkgerr.h ../libpkg/keystore.h \
-  ../libpkg/cfext.h ../hdrs/libinst.h ../hdrs/pkginfo.h ../libpkg/cfext.h \
-  ../hdrs/install.h ../hdrs/libadm.h ../hdrs/sys/vtoc.h \
-  ../hdrs/sys/dklabel.h ../hdrs/valtools.h
 ptext.o: ptext.c ../hdrs/libadm.h ../hdrs/sys/vtoc.h \
   ../hdrs/sys/dklabel.h ../hdrs/pkgstrct.h ../hdrs/pkginfo.h \
   ../hdrs/valtools.h ../hdrs/install.h

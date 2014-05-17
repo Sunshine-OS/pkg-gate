@@ -27,6 +27,7 @@ mrproper: clean
 		(cd "$$i" && $(MAKE) $@) || exit; \
 	done
 	rm -f $(MAKEFILES)
+	rm -f pkginfo
 
 PKGROOT = /var/tmp/heirloom-pkgtools
 PKGTEMP = /var/tmp

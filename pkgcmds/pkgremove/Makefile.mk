@@ -9,7 +9,7 @@ PKGLIBS = -L../../libinst -linst -L../../libpkg -lpkgu -L../../libgendb -lgendb 
 	-L$(CCSDIR)/lib -ll
 
 BIN = pkgremove
-OBJ = check.o delmap.o main.o predepend.o quit.o special.o wsreg_pkgrm.o ../../version/version.o
+OBJ = check.o delmap.o main.o quit.o special.o wsreg_pkgrm.o ../../version/version.o
 
 all: $(BIN)
 
@@ -47,12 +47,6 @@ main.o: main.c ../../hdrs/pkgstrct.h ../../hdrs/pkginfo.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../hdrs/install.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
   ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h ../../hdrs/messages.h
-predepend.o: predepend.c ../../hdrs/pkglocs.h ../../libpkg/pkglib.h \
-  ../../hdrs/pkgdev.h ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h \
-  ../../libpkg/keystore.h ../../libpkg/cfext.h ../../hdrs/libinst.h \
-  ../../hdrs/pkginfo.h ../../libpkg/pkglib.h ../../libpkg/cfext.h \
-  ../../hdrs/install.h ../../hdrs/libadm.h ../../hdrs/sys/vtoc.h \
-  ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h
 quit.o: quit.c ../../libpkg/pkglib.h ../../hdrs/pkgdev.h \
   ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/libadm.h \

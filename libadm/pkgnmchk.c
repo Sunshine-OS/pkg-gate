@@ -59,7 +59,7 @@ static char	*rsvrd[] = {
 static int abi_namelngth = 0;
 
 static int
-valname(char *pkg, int wild, int presvr4flg)
+valname(char *pkg, int wild)
 {
 	int	count, i, n;
 	char	*pt;
@@ -82,9 +82,7 @@ valname(char *pkg, int wild, int presvr4flg)
 	 * before we validate the package abbreviation
 	 */
 	if (pt = strpbrk(pkg, NMBRK)) {
-		if (presvr4flg && (strcmp(pt, WILD3) == 0))
-			return (0); /* SVR3 packages have no validation */
-		else if ((strcmp(pt, WILD1) == 0) || (strcmp(pt, WILD2) == 0)) {
+		if ((strcmp(pt, WILD1) == 0) || (strcmp(pt, WILD2) == 0)) {
 			/* wildcard specification */
 			if (!wild)
 				return (1);
@@ -104,8 +102,7 @@ valname(char *pkg, int wild, int presvr4flg)
 
 	/* check for valid package name */
 	count = 0;
-	if (!isalnum((unsigned char)*pkg) ||
-		(!presvr4flg && !isalpha((unsigned char)*pkg)))
+	if (!isalpha((unsigned char)*pkg))
 		return (-1);
 	while (*pkg && !strchr(NMBRK, *pkg)) {
 		if (!isalnum((unsigned char)*pkg) && !strpbrk(pkg, "-+"))
@@ -137,7 +134,7 @@ pkgnmchk(char *pkg, char *spec, int presvr4flg)
 	 *	"x*"	pkg must be valid and must be an instance of "x"
 	 */
 
-	if (valname(pkg, ((spec == NULL) ? 1 : 0), presvr4flg))
+	if (valname(pkg, ((spec == NULL) ? 1 : 0)))
 		return (1); /* invalid or reserved name */
 
 	if ((spec == NULL) || (strcmp(spec, "all") == 0))
@@ -152,13 +149,10 @@ pkgnmchk(char *pkg, char *spec, int presvr4flg)
 		spec++;
 	}
 
-	if ((strcmp(spec, WILD1) == 0) || (strcmp(spec, WILD2) == 0) ||
-	    (strcmp(spec, WILD3) == 0)) {
+	if ((strcmp(spec, WILD1) == 0) || (strcmp(spec, WILD2) == 0)) 
 		if ((pkg[0] == '\0') || (pkg[0] == '.'))
 			return (0);
-	}
-	if ((spec[0] == '\0') && (strcmp(pkg, WILD3) == 0))
-		return (0); /* compare pkg.name to pkg */
+
 	return (1);
 }
 
