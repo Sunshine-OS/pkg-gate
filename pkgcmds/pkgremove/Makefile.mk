@@ -34,7 +34,7 @@ check.o: check.c ../../hdrs/pkgstrct.h ../../hdrs/install.h \
   ../../libpkg/keystore.h ../../libpkg/cfext.h ../../hdrs/libadm.h \
   ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
-  ../../libpkg/cfext.h wsreg_pkgrm.h ../../hdrs/messages.h
+  ../../libpkg/cfext.h ../../hdrs/messages.h
 delmap.o: delmap.c ../../hdrs/pkgstrct.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libpkg/cfext.h ../../hdrs/libadm.h ../ \
