@@ -1357,9 +1357,17 @@ pkgxfer(char *srcinst, int options)
 	 */
 	nparts = 1;
 	for (part = 1; part <= nparts; /* void */) {
-
 		if (options & PT_INFO_ONLY)
 			nparts = 0;
+
+		if (part == 1) {
+			(void) sprintf(cmd, "find %s %s", PKGINFO, PKGMAP);
+			if (nparts && (isdir(INSTALL) == 0)) {
+				(void) strcat(cmd, " ");
+				(void) strcat(cmd, INSTALL);
+			}
+		} else
+			(void) sprintf(cmd, "find %s", PKGINFO);
 
 		if (nparts) {
 			for (i = 0; reloc_names[i] != NULL; i++) {
