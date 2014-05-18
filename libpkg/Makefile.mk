@@ -8,7 +8,7 @@ OBJ = canonize.o ckparam.o ckvolseq.o cvtpath.o dbsql.o devtype.o \
 	dstream.o fmkdir.o gpkglist.o gpkgmap.o isdir.o keystore.o \
 	logerr.o mappath.o ncgrpw.o nhash.o pkgerr.o \
 	pkgexecl.o pkgexecv.o pkgmount.o pkgstr.o pkgtrans.o pkgweb.o \
-	pkgxpand.o ppkgmap.o progerr.o putcfile.o rrmdir.o runcmd.o \
+	ppkgmap.o progerr.o putcfile.o rrmdir.o runcmd.o \
 	security.o srchcfile.o tputcfent.o verify.o vfpops.o
 
 all: libpkgu.a
@@ -69,8 +69,6 @@ pkgtrans.o: pkgtrans.c ../hdrs/pkginfo.h ../hdrs/pkgstrct.h \
   ./pkgerr.h ./keystore.h ./cfext.h ./pkglibmsgs.h ./keystore.h \
   pkglocale.h pkgerr.h ../hdrs/libadm.h
 pkgweb.o: pkgweb.c ../hdrs/libadm.h
-pkgxpand.o: pkgxpand.c ./pkglib.h ../hdrs/pkgdev.h ../hdrs/pkgstrct.h \
-  ./pkgerr.h ./keystore.h ./cfext.h pkglocale.h
 ppkgmap.o: ppkgmap.c ../hdrs/pkgstrct.h
 progerr.o: progerr.c pkglocale.h pkgerr.h
 putcfile.o: putcfile.c ../hdrs/pkgstrct.h pkglib.h ../hdrs/pkgdev.h \

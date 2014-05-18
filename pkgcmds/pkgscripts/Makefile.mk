@@ -37,9 +37,7 @@ install: all
 	mkdir -p $(ROOT)$(VSADMDIR)/install/admin
 	mkdir -p $(ROOT)$(VSADMDIR)/install/logs
 	$(INSTALL) -c -m 644 default $(ROOT)$(VSADMDIR)/install/admin/default
-	mkdir -p $(ROOT)$(ETCDIR)
-	test -f $(ROOT)$(ETCDIR)/device.tab && exit 0 || \
-		$(INSTALL) -c -m 644 device.tab $(ROOT)$(ETCDIR)/device.tab
+	mkdir -p $(ROOT)$(VAR)/spool/pkg
 
 clean:
 	rm -f $(BIN) $(OBJ) $(PLAIN) core log

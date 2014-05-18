@@ -1108,8 +1108,7 @@ main(int argc, char **argv)
 	/* if no device and no url, get and validate default device */
 
 	if ((device == NULL) && (uri == NULL)) {
-		progerr(ERR_NODEVICE);
-		quit(1);
+		device = "/var/spool/pkg/";
 	}
 
 #if 0
