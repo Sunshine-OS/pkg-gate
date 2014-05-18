@@ -79,7 +79,6 @@ static char		**remoteFstypes = (char **)NULL;
 static void _InitRemoteFstypes(void);
 
 int isFdRemote(int a_fd);
-int isPathRemote(char *a_path);
 int isFstypeRemote(char *a_fstype);
 int isdir(char *path);
 int isfile(char *dir, char *file);
@@ -229,35 +228,6 @@ iscpio(char *path, int *iscomp)
 			}
 		}
 	}
-}
-
-/*
- * Name:	isPathRemote
- * Description:	determine if a path object is local or remote
- * Arguments:	a_path - [RO, *RO] - (char *)
- *			Pointer to string representing the path to check
- * Returns:	int
- *			1 - the path is remote
- *			0 - the path is local to this system
- *			-1 - cannot determine if path is remote or local
- */
-
-int
-isPathRemote(char *a_path)
-{
-	int		r;
-	struct stat	statbuf;
-
-	r = lstat(a_path, &statbuf);
-	if (r < 0) {
-		return (-1);
-	}
-
-#ifdef	__sun
-	return (isFstypeRemote(statbuf.st_fstype));
-#else
-	return (-1);
-#endif
 }
 
 /*

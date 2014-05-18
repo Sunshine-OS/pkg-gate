@@ -421,7 +421,6 @@ extern int	gpkgmapvfp(struct cfent *ept, VFP_T *fpv);
 extern void	setmapmode(int mode_no);
 extern int	isFdRemote(int a_fd);
 extern int	isFstypeRemote(char *a_fstype);
-extern int	isPathRemote(char *a_path);
 extern int	iscpio(char *path, int *iscomp);
 extern int	isdir(char *path);
 extern int	isfile(char *dir, char *file);
