@@ -70,13 +70,10 @@ extern int	setitem(CKMENU *menup, char *choice);
 #define	MAX_CAT_ARGS	64
 #define	MAX_CAT_LEN		16
 
-static int	cont_in_list = 0;	/* live continuation */
-static char	cont_keyword[PKGSIZ+1];	/* the continuation keyword */
-
 /*
  * Allocate memory for the next package name. This function attempts the
  * allocation and if that succeeds, returns a pointer to the new memory
- * location and increments "n". Otherwise, it returens NULL and n is
+ * location and increments "n". Otherwise, it returns NULL and n is
  * unchanged.
  */
 static char **
@@ -96,18 +93,6 @@ next_n(int *n, char **nwpkg)
 
 	*n = loc_n;
 	return (nwpkg);
-}
-
-/*
- * This informs gpkglist() to put a keyword at the head of the pkglist. This
- * was originally intended for live continue, but it may have other
- * applications as well.
- */
-void
-pkglist_cont(char *keyword)
-{
-	cont_in_list = 1;
-	(void) strncpy(cont_keyword, keyword, PKGSIZ);
 }
 
 /*
@@ -139,11 +124,10 @@ gpkglist(char *dir, char **pkg, char **catg)
 	}
 
 	/*
-	 * If no explicit list was provided and this is not a continuation
-	 * (implying a certain level of direction on the caller's part)
+	 * If no explicit list was provided
 	 * present a menu of available packages for installation.
 	 */
-	if (pkg[0] == NULL && !cont_in_list) {
+	if (pkg[0] == NULL) {
 		menup = allocmenu(pkg_gt(HEADER), CKALPHA);
 		if (setinvis(menup, "all")) {
 			errno = EFAULT;
@@ -203,16 +187,7 @@ gpkglist(char *dir, char **pkg, char **catg)
 	 */
 	i = n = 0;
 	do {
-		if (cont_in_list) {	/* This is a live continuation. */
-			nwpkg[n] = strdup(cont_keyword);
-			nwpkg = next_n(&n, nwpkg);
-			nwpkg[n] = NULL;
-			cont_in_list = 0;	/* handled */
-
-			if (pkg[0] == NULL) {	/* It's just a continuation. */
-				break;
-			}
-		} else if (pkgnmchk(pkg[i], "all", 1)) {
+		if (pkgnmchk(pkg[i], "all", 1)) {
 			/* wildcard specification */
 			(void) fpkginst(NULL);
 			inst = fpkginst(pkg[i], NULL, NULL);
