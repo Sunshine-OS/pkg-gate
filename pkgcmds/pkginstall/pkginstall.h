@@ -104,7 +104,6 @@ extern char	*getinst __P((int *updatingExisting, struct pkginfo *info,
 extern int	is_samepkg __P((void));
 extern int	dockspace __P((char *spacefile));
 
-extern int	special_contents_add(int, struct cfextra **, const char *);
 extern boolean_t	rm_all_pkg_entries(char *, char *);
 
 #ifdef __cplusplus

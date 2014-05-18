@@ -294,19 +294,12 @@ extern "C" {
 	"The install database does not exist.  It is impossible to perform " \
 	"the\nrequested operation at this time.")
 
-#define	MSG_BAD_SPECIAL_ACCESS	gettext(\
-	"Unable to read the special contents file %s")
-
 #define	MSG_NO_OPEN_DB	gettext(\
 	"Unable to open the install database.  The requested operation " \
 	"cannot be\nperformed.")
 
 #define	MSG_NO_QUERY_DB	gettext(\
 	"Unable to operate on the install database.")
-
-#define	MSG_NO_DB_NO_SPECIAL	gettext(\
-	"The install database must be upgraded in order to perform this " \
-	"command.")
 
 #define	MSG_NO_DB_REMOVE	gettext(\
 	"Temporary file <%s> cannot be created.\n")

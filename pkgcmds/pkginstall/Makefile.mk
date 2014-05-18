@@ -11,7 +11,7 @@ PKGLIBS = -L../../libinst -linst -L../../libpkg -lpkgu -L../../libgendb -lgendb 
 BIN = pkginstall
 OBJ = backup.o check.o cppath.o dockspace.o getinst.o instvol.o main.o \
 	merginfo.o pkgenv.o pkgvolume.o quit.o reqexec.o \
-	sortmap.o special.o ../../version/version.o
+	sortmap.o ../../version/version.o
 
 all: $(BIN)
 
@@ -116,10 +116,3 @@ sortmap.o: sortmap.c ../../hdrs/pkgstrct.h ../../hdrs/pkglocs.h \
   ../../hdrs/libadm.h ../ ../../hdrs/sys/dklabel.h \
   ../../hdrs/pkginfo.h ../../hdrs/valtools.h ../../hdrs/install.h \
   ../../hdrs/libinst.h ../../libpkg/cfext.h
-special.o: special.c ../../hdrs/pkgstrct.h ../../hdrs/pkginfo.h \
-  ../../hdrs/pkgdev.h ../../hdrs/pkglocs.h ../../libpkg/pkglib.h \
-  ../../libpkg/pkgerr.h ../../libpkg/keystore.h ../../libpkg/cfext.h \
-  ../../libpkg/dbsql.h ../../libgendb/genericdb.h ../../hdrs/libadm.h \
-  ../ ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h \
-  ../../hdrs/install.h ../../hdrs/libinst.h ../../libpkg/cfext.h \
-  ../../hdrs/dryrun.h pkginstall.h ../../hdrs/messages.h

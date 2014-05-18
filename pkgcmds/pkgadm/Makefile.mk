@@ -9,7 +9,7 @@ PKGLIBS = -L../../libinst -linst -L../../libpkg -lpkgu -L../../libgendb -lgendb 
 	-L$(CCSDIR)/lib -ll
 
 BIN = pkgadm
-OBJ = addcert.o certs.o listcert.o lock.o main.o pkgadm_contents.o \
+OBJ = addcert.o certs.o listcert.o lock.o main.o \
 	pkgadm_special.o removecert.o ../../version/version.o
 
 all:
@@ -73,13 +73,6 @@ pkgadm_contents.o: pkgadm_contents.c ../../hdrs/pkgstrct.h \
   ../../libgendb/genericdb.h ../../hdrs/libinst.h ../../hdrs/pkginfo.h \
   ../../libpkg/pkglib.h ../../libpkg/cfext.h ../../hdrs/install.h \
   pkgadm_msgs.h ../../libpkg/dbsql.h ../../libgendb/genericdb.h
-pkgadm_special.o: pkgadm_special.c ../../hdrs/pkgstrct.h pkgadm.h \
-  ../../libpkg/pkgerr.h ../../libpkg/keystore.h ../../libpkg/pkgerr.h \
-  ../../libpkg/pkglib.h ../../hdrs/pkgdev.h ../../libpkg/keystore.h \
-  ../../libpkg/cfext.h ../../libgendb/genericdb.h ../../hdrs/libinst.h \
-  ../../hdrs/pkginfo.h ../../libpkg/pkglib.h ../../libpkg/cfext.h \
-  ../../hdrs/install.h pkgadm_msgs.h ../../libpkg/dbsql.h \
-  ../../libgendb/genericdb.h
 removecert.o: removecert.c pkgadm.h ../../libpkg/pkgerr.h \
   ../../libpkg/keystore.h ../../libpkg/pkgerr.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgdev.h ../../hdrs/pkgstrct.h ../../libpkg/keystore.h \

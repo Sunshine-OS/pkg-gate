@@ -975,14 +975,6 @@ main(int argc, char *argv[])
 	lockupd("remove");
 
 	/*
-	 * Ensure that the contents file is updated even if the db has
-	 * been upgraded, in the case that there are relevant entries
-	 * in a special_contents file.  The return value is ignored
-	 * since we do not want special_contents operation to prevent
-	 * pkgremove from succeeding.  We do report errors to stderr.
-	 */
-
-	/*
 	 * Remove all components belonging to this package.
 	 * Don't remove components if only updating the DB.
 	 * Don't remove components if files are not being deleted.

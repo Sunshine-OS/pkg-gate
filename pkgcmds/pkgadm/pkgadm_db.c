@@ -741,55 +741,6 @@ get_contents(int argc, char **argv)
 }
 
 /*
- * gen_special
- *
- * Evokes the command to create a new contents file on the basis of the
- * special_contents file's entries.  The command line is used to get the
- * alternate root if one is defined.
- *
- * Return: 0 on success, 1 on failure.
- * Side effects: This function has a large effect on success:  It replaces
- *    the contents file.
- */
-int
-gen_special(int argc, char **argv)
-{
-#ifdef SQLDB_IS_USED
-	char *pcroot = get_alt_root(argc, argv);
-	int result = 0;
-
-	/* If the db has not been upgraded, there is nothing to do. */
-	if (genericdb_exists(pcroot) == 0) {
-		log_msg(LOG_MSG_ERR, MSG_NO_DB_NO_SPECIAL);
-		result = 1;
-		goto gen_special_done;
-	}
-
-	if (set_inst_root(pcroot) == 0) {
-		return (1);
-	}
-
-	set_PKGpaths(get_inst_root());
-
-	if (lockinst(PKGADM_NAME, "all packages", "gen_special") == 0) {
-		result = 1;
-		goto gen_special_done;
-	}
-
-	result = special_contents_generator(pcroot);
-
-gen_special_done:
-	if (pcroot)
-		free(pcroot);
-	unlockinst();
-
-	return (result);
-#else
-	return (0);
-#endif
-}
-
-/*
  * get_dbstatus
  *
  * Return either 'text' or 'db' depending on the db status.

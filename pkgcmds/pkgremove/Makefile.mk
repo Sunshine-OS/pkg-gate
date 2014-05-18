@@ -9,7 +9,7 @@ PKGLIBS = -L../../libinst -linst -L../../libpkg -lpkgu -L../../libgendb -lgendb 
 	-L$(CCSDIR)/lib -ll
 
 BIN = pkgremove
-OBJ = check.o delmap.o main.o quit.o special.o ../../version/version.o
+OBJ = check.o delmap.o main.o quit.o ../../version/version.o
 
 all: $(BIN)
 
@@ -53,6 +53,3 @@ quit.o: quit.c ../../libpkg/pkglib.h ../../hdrs/pkgdev.h \
   ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h ../../hdrs/messages.h
-special.o: special.c ../../hdrs/pkgstrct.h ../../libpkg/pkglib.h \
-  ../../hdrs/pkgdev.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
-  ../../libpkg/cfext.h

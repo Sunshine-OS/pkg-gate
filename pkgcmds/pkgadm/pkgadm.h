@@ -114,9 +114,6 @@ extern int convert_depend_to_sql(struct dstr *, FILE *, const char *);
 extern int convert_db_to_pkginfo(const char *, genericdb *, const char *);
 extern int convert_pkginfo_to_sql(struct dstr *, FILE *, const char *);
 
-/* pkgadm_special.c */
-extern int special_contents_generator(const char *);
-
 #ifdef __cplusplus
 }
 #endif
