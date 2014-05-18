@@ -123,11 +123,9 @@ char	pkgloc[PATH_MAX];
 /*
  * The following variable is the name of the device to which stdin
  * is connected during execution of a procedure script. /dev/null is
- * correct for all ABI compliant packages. For non-ABI-compliant
- * packages, the '-o' command line switch changes this to /dev/tty
- * to allow user interaction during these scripts. -- JST
+ * correct for all ABI compliant packages.
  */
-static char 	*script_in = PROC_STDIN;	/* assume ABI compliance */
+static char 	*script_in = PROC_STDIN;
 
 static char	*client_mntdir; 	/* mount point for client's basedir */
 static char	pkgbin[PATH_MAX],
@@ -164,8 +162,6 @@ int
 main(int argc, char *argv[])
 {
 	FILE		*fp;
-	char		*abi_comp_ptr;
-	char		*abi_sym_ptr;
 	char		*p;
 	char		*prog_full_name = NULL;
 	char		*pt;
@@ -223,7 +219,7 @@ main(int argc, char *argv[])
 
 	/* parse command line options */
 
-	while ((c = getopt(argc, argv, "?Aa:b:FMN:nO:oR:V:vy")) != EOF) {
+	while ((c = getopt(argc, argv, "?Aa:b:FMN:nO:R:V:v")) != EOF) {
 		switch (c) {
 		/*
 		 * Same as pkgrm: Allow admin to remove package objects from
@@ -409,14 +405,6 @@ main(int argc, char *argv[])
 			break;
 
 		/*
-		 * Different from pkgrm: This is an old non-ABI package
-		 */
-
-		case 'o':
-		    script_in = PROC_XSTDIN;
-		    break;
-
-		/*
 		 * Same as pkgrm: defines the full path name of a
 		 * directory to use as the root_path.  All files,
 		 * including package system information files, are
@@ -448,14 +436,6 @@ main(int argc, char *argv[])
 		 */
 		case 'v':
 		    pkgverbose++;
-		    break;
-
-		/*
-		 * Different from pkgrm: process this package using
-		 * old non-ABI symlinks
-		 */
-		case 'y':
-		    set_nonABI_symlinks();
 		    break;
 
 		default:
@@ -654,10 +634,6 @@ main(int argc, char *argv[])
 
 	environ = NULL;
 
-	if (nonABI_symlinks()) {
-		putparam("PKG_NONABI_SYMLINKS", "TRUE");
-	}
-
 	/*
 	 * read the pkginfo file and fix any PKGSAV path - the correct
 	 * install_root will be prepended to the existing path.
@@ -716,25 +692,6 @@ main(int argc, char *argv[])
 
 	putuserlocale();
 
-	/*
-	 * Now do all the various setups based on ABI compliance
-	 */
-
-	/* Read the environment provided by the pkginfo file */
-	abi_comp_ptr = getenv("NONABI_SCRIPTS");
-
-	/* if not ABI compliant set global flag */
-	abi_sym_ptr = getenv("PKG_NONABI_SYMLINKS");
-	if (abi_sym_ptr && strncasecmp(abi_sym_ptr, "TRUE", 4) == 0) {
-		set_nonABI_symlinks();
-	}
-
-	/*
-	 * If pkginfo says it's not compliant then set non_abi_scripts.
-	 */
-	if (abi_comp_ptr && strncmp(abi_comp_ptr, "TRUE", 4) == 0) {
-		script_in = PROC_XSTDIN;
-	}
 	/*
 	 * Since this is a removal, we can tell whether it's absolute or
 	 * not from the resident pkginfo file read above.

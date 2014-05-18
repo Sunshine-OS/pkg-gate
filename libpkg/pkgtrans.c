@@ -1230,7 +1230,7 @@ pkgxfer(char *srcinst, int options)
 	 * when this routine is entered, the first part of
 	 * the package to transfer is already available in
 	 * the directory indicated by 'src' --- unless the
-	 * source device is a datstream, in which case only
+	 * source device is a datastream, in which case only
 	 * the pkginfo and pkgmap files are available in 'src'
 	 */
 	src = srcdev.dirname;
@@ -1339,7 +1339,7 @@ pkgxfer(char *srcinst, int options)
 		return (1);
 	}
 
-	if (ids_name) {	/* unpack the datatstream into a directory */
+	if (ids_name) {	/* unpack the datastream into a directory */
 		/*
 		 * transfer pkginfo & pkgmap first
 		 */

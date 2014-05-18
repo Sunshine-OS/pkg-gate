@@ -476,8 +476,6 @@ extern void	progerr(char *fmt, ...);
 extern void	pkgerr(PKG_ERR *);
 extern void	rpterr(void);
 extern void	tputcfent(struct cfent *ept, FILE *fp);
-extern void	set_nonABI_symlinks(void);
-extern int	nonABI_symlinks(void);
 extern void	disable_attribute_check(void);
 extern int	get_disable_attribute_check(void);
 

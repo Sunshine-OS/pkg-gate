@@ -133,8 +133,6 @@ static int	pkgverbose = 0;		/* non-zero if verbose mode selected */
  * interaction during procedure scripts.
  */
 
-static int	old_pkg = 0;
-static int	old_symlinks = 0;
 static int	no_map_client = 0;
 
 /* Set by -O nozones: do not process any zones */
@@ -669,25 +667,6 @@ main(int argc, char **argv)
 		(z_non_global_zones_exist() == B_TRUE)) {
 		echoDebug(DBG_PKGRM_ENABLING_HOLLOW);
 		set_depend_pkginfo_DB(B_TRUE);
-	}
-
-	/*
-	 * See if user wants this to be handled as an old style pkg.
-	 * NOTE : the ``exception_pkg()'' stuff is to be used only
-	 * through on495. This function comes out for on1095. See
-	 * PSARC 1993-546. -- JST
-	 */
-	if (getenv("NONABI_SCRIPTS") != NULL) {
-		old_pkg = 1;
-	}
-
-	/*
-	 * See if the user wants to process symlinks consistent with
-	 * the old behavior.
-	 */
-
-	if (getenv("PKG_NONABI_SYMLINKS") != NULL) {
-		old_symlinks = 1;
 	}
 
 	if (devtype((spoolDir ? spoolDir : get_PKGLOC()), &pkgdev) ||
@@ -1285,25 +1264,6 @@ pkgZoneCheckRemove(char *a_zoneName, char **a_inheritedPkgDirs,
 		arg[nargs++] = a_altBinDir;
 	}
 
-	/*
-	 * NONABI_SCRIPTS defined: pass -o to pkgremove; refers to a
-	 * pkg requiring operator interaction during a procedure script
-	 * (common before on1093)
-	 */
-
-	if (old_pkg) {
-		arg[nargs++] = "-o";
-	}
-
-	/*
-	 * PKG_NONABI_SYMLINKS defined: pass -y to pkgremove; process
-	 * symlinks consistent with old behavior
-	 */
-
-	if (old_symlinks) {
-		arg[nargs++] = "-y";
-	}
-
 	/* pkgrm -M: pass -M to pkgremove: don't mount client file systems */
 
 	arg[nargs++] = "-M";
@@ -1516,25 +1476,6 @@ pkgZoneRemove(char *a_zoneName, char **a_inheritedPkgDirs,
 	if (a_altBinDir != (char *)NULL) {
 		arg[nargs++] = "-b";
 		arg[nargs++] = a_altBinDir;
-	}
-
-	/*
-	 * NONABI_SCRIPTS defined: pass -o to pkgremove; refers to a
-	 * pkg requiring operator interaction during a procedure script
-	 * (common before on1093)
-	 */
-
-	if (old_pkg) {
-		arg[nargs++] = "-o";
-	}
-
-	/*
-	 * PKG_NONABI_SYMLINKS defined: pass -y to pkgremove; process
-	 * symlinks consistent with old behavior
-	 */
-
-	if (old_symlinks) {
-		arg[nargs++] = "-y";
 	}
 
 	/* pkgrm -M: pass -M to pkgremove: don't mount client file systems */
@@ -1759,25 +1700,6 @@ pkgRemove(int a_nodelete, char *a_altBinDir, char *a_adminFile,
 	if (a_altBinDir != (char *)NULL) {
 		arg[nargs++] = "-b";
 		arg[nargs++] = a_altBinDir;
-	}
-
-	/*
-	 * NONABI_SCRIPTS defined: pass -o to pkgremove; refers to a
-	 * pkg requiring operator interaction during a procedure script
-	 * (common before on1093)
-	 */
-
-	if (old_pkg) {
-		arg[nargs++] = "-o";
-	}
-
-	/*
-	 * PKG_NONABI_SYMLINKS defined: pass -y to pkgremove; process
-	 * symlinks consistent with old behavior
-	 */
-
-	if (old_symlinks) {
-		arg[nargs++] = "-y";
 	}
 
 	/* pkgrm -M: pass -M to pkgrm: dont mount client file systems */

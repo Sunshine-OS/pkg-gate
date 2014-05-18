@@ -77,7 +77,7 @@ extern void	instvol __P((struct cfextra **extlist, char *srcinst, int part,
 			int nparts, VFP_T **a_cfVfp, VFP_T **a_cfTmpVfp,
 			char **r_updated, char **r_skipped,
 			char *a_zoneName));
-extern int	reqexec __P((int update, char *script, int non_abi_scripts,
+extern int	reqexec __P((int update, char *script,
 			boolean_t enable_root_user));
 extern int	chkexec __P((int update, char *script));
 extern int	rdonly_respfile __P((void));

@@ -226,7 +226,7 @@ get_respfile(void)
  * isn't read only.
  */
 int
-reqexec(int update, char *script, int non_abi_scripts,
+reqexec(int update, char *script,
 	boolean_t enable_root_user)
 {
 	char	*req_user;
@@ -239,9 +239,6 @@ reqexec(int update, char *script, int non_abi_scripts,
 	if (enable_root_user == B_TRUE) {
 		/* use the root user */
 		req_user = CHK_USER_ROOT;
-	} else if (non_abi_scripts != 0) {
-		/* non-compliant package user */
-		req_user = CHK_USER_NON;
 	} else {
 		/* standard non-privileged user */
 		req_user = CHK_USER_ALT;

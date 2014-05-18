@@ -143,7 +143,6 @@ main(int argc, char *argv[])
 	int	pkgfmt = 0;	/* Makes more sense as a pointer, but */
 				/*	18N is compromised. */
 	char	file[PATH_MAX+1],
-		*abi_sym_ptr,
 		*vfstab_file = NULL;
 	char *all_pkgs[4] = {"all", NULL};
 	char **category = NULL;
@@ -172,12 +171,6 @@ main(int argc, char *argv[])
 	if (!set_inst_root(getenv("PKG_INSTALL_ROOT"))) {
 		progerr(gettext(ERR_ROOT_SET));
 		quit(1);
-	}
-
-	/* check if not ABI compliant mode */
-	abi_sym_ptr = getenv("PKG_NONABI_SYMLINKS");
-	if (abi_sym_ptr && strncasecmp(abi_sym_ptr, "TRUE", 4) == 0) {
-		set_nonABI_symlinks();
 	}
 
 	/* bugId 4012147 */

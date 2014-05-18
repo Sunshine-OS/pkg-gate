@@ -173,7 +173,7 @@ main(int argc, char *argv[])
 	char	buf[MAX_PKG_PARAM_LENGTH];
 	char	temp[MAX_PKG_PARAM_LENGTH];
 	char	param[MAX_PKG_PARAM_LENGTH];
-	char	*pt, *value, *pkginst, *tmpdir, *abi_sym_ptr,
+	char	*pt, *value, *pkginst, *tmpdir,
 		**cmdparam;
 	char	*pkgname;
 	char	*pkgvers;
@@ -294,12 +294,6 @@ main(int argc, char *argv[])
 	tmpdir = getenv("TMPDIR");
 	if (tmpdir == NULL)
 		tmpdir = P_tmpdir;
-
-	/* bug id 4244631, not ABI compliant */
-	abi_sym_ptr = getenv("PKG_NONABI_SYMLINKS");
-	if (abi_sym_ptr && (strncasecmp(abi_sym_ptr, "TRUE", 4) == 0)) {
-		set_nonABI_symlinks();
-	}
 
 	if (device == NULL) {
 		progerr(gettext(ERR_DEVICE), SPOOLDEV);

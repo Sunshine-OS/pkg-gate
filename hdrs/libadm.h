@@ -198,8 +198,6 @@ extern char	*fpkginst __P((char *pkg, ...));
  */
 extern int	pkgnmchk __P((register char *pkg, register char *spec,
 				int presvr4flg));
-extern void	set_ABI_namelngth __P((void));
-extern int	get_ABI_namelngth __P((void));
 
 /*
  * pkgparam.c

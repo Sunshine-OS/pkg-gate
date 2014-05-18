@@ -187,24 +187,6 @@ static boolean_t	globalZoneOnly = B_FALSE;
 
 static boolean_t	patchPkgRemoval = B_FALSE;
 
-/*
- * Assume the package is ABI and POSIX compliant as regards user
- * interactiion during procedure scripts.
- */
-
-static int	old_pkg = 0;
-
-/* Assume pkg should be installed according to the ABI */
-
-static int	old_symlinks = 0;
-
-/*
- * Default name length will be 32 chars - if this is set,
- * disable the 32 char name limit extension
- */
-
-static int	ABI_namelength = 0;
-
 #if	!defined(TEXT_DOMAIN)	/* Should be defined by cc -D */
 #define	TEXT_DOMAIN	"SYS_TEST"
 #endif
@@ -332,7 +314,6 @@ main(int argc, char **argv)
 	WebScheme		scheme = none;
 #endif
 	char			**category = NULL;
-	char			*abiPtr;
 	char			*altBinDir = (char *)NULL;
 	char			*catg_arg = NULL;
 	char			*device = NULL;		/* dev pkg stored on */
@@ -1265,35 +1246,6 @@ main(int argc, char **argv)
 #endif	/* __sun */
 
 	/*
-	 * See if user wants this to be handled as an old style pkg.
-	 * NOTE : the ``exception_pkg()'' stuff is to be used only
-	 * through on495. This function comes out for on1095. See
-	 * PSARC 1993-546. -- JST
-	 */
-
-	if (getenv("NONABI_SCRIPTS") != NULL) {
-		old_pkg = 1;
-	}
-
-	/*
-	 * See if the user wants to process symlinks consistent with
-	 * the old behavior.
-	 */
-
-	if (getenv("PKG_NONABI_SYMLINKS") != NULL) {
-		old_symlinks = 1;
-	}
-
-	/*
-	 * See if the user wants the package name length restricted.
-	 */
-
-	abiPtr = getenv("PKG_ABI_NAMELENGTH");
-	if (abiPtr && strncasecmp(abiPtr, "TRUE", 4) == 0) {
-		ABI_namelength = 1;
-	}
-
-	/*
 	 * validate the package source device - return pkgdev info that
 	 * describes the package source device.
 	 */
@@ -1583,34 +1535,6 @@ pkgZoneCheckInstall(char *a_zoneName, char **a_inheritedPkgDirs,
 
 	if (disableAttributes) {
 		arg[nargs++] = "-A";
-	}
-
-	/*
-	 * NONABI_SCRIPTS defined: pass -o to pkginstall; refers to a
-	 * pkg requiring operator interaction during a procedure script
-	 * (common before on1093)
-	 */
-
-	if (old_pkg) {
-		arg[nargs++] = "-o";
-	}
-
-	/*
-	 * PKG_NONABI_SYMLINKS defined: pass -y to pkginstall; process
-	 * symlinks consistent with old behavior
-	 */
-
-	if (old_symlinks) {
-		arg[nargs++] = "-y";
-	}
-
-	/*
-	 * PKG_ABI_NAMELENGTH defined: pass -e to pkginstall; causes
-	 * package name length to be restricted
-	 */
-
-	if (ABI_namelength) {
-		arg[nargs++] = "-e";
 	}
 
 	/* pkgadd -S: pass -S to pkginstall: suppress copyright notices */
@@ -2284,34 +2208,6 @@ pkgInstall(char *a_altRoot, char *a_idsName, char *a_pkgDir, char *a_altBinDir,
 
 	if (disableAttributes) {
 		arg[nargs++] = "-A";
-	}
-
-	/*
-	 * NONABI_SCRIPTS defined: pass -o to pkginstall; refers to a
-	 * pkg requiring operator interaction during a procedure script
-	 * (common before on1093)
-	 */
-
-	if (old_pkg) {
-		arg[nargs++] = "-o";
-	}
-
-	/*
-	 * PKG_NONABI_SYMLINKS defined: pass -y to pkginstall; process
-	 * symlinks consistent with old behavior
-	 */
-
-	if (old_symlinks) {
-		arg[nargs++] = "-y";
-	}
-
-	/*
-	 * PKG_ABI_NAMELENGTH defined: pass -e to pkginstall; causes
-	 * package name length to be restricted
-	 */
-
-	if (ABI_namelength) {
-		arg[nargs++] = "-e";
 	}
 
 	/* pkgadd -S: pass -S to pkginstall: suppress copyright notices */

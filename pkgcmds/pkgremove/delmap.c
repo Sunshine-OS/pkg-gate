@@ -56,8 +56,6 @@ extern char	*pkginst;
 
 #define	ERR_WRENT	"write of entry failed, errno=%d"
 #define	ERR_MEMORY	"no memory, errno=%d"
-#define	ERR_READ_C	"bad read of contents file"
-#define	ERR_READ_DB	"bad read of the database"
 
 extern struct cfent	**eptlist;
 extern int	eptnum;

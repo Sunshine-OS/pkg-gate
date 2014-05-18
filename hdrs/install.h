@@ -50,7 +50,6 @@ extern "C" {
 #define	PROC_USER	"root"
 #define	PROC_GRP	"other"
 #define	PROC_STDIN	"/dev/null"
-#define	PROC_XSTDIN	"/dev/tty"
 #define	PROC_STDOUT	"/dev/tty"
 
 /* Settings for class action scripts */
@@ -67,7 +66,6 @@ extern "C" {
 #define	CHK_USER_ALT	"nobody"	/* alternate non-priv user */
 #endif
 #define	CHK_USER_ROOT	"root"		/* root user */
-#define	CHK_USER_NON	"root"		/* user for non-compliant pkg's */
 #define	CHK_GRP		"other"
 #define	CHK_STDIN	"/dev/null"
 #define	CHK_STDOUT	"/dev/tty"

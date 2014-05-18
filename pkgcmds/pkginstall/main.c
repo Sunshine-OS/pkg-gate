@@ -122,15 +122,12 @@ static char	*ro_params[] = {
 /*
  * The following variable is the name of the device to which stdin
  * is connected during execution of a procedure script. PROC_STDIN is
- * correct for all ABI compliant packages. For non-ABI-compliant
- * packages, the '-o' command line switch changes this to PROC_XSTDIN
- * to allow user interaction during these scripts. -- JST
+ * correct for all ABI compliant packages.
  */
-static char	*script_in = PROC_STDIN;	/* assume ABI compliance */
+static char	*script_in = PROC_STDIN;
 
 static char	*pkgdrtarg = NULL;
 static char	*pkgcontsrc = NULL;
-static int	non_abi_scripts = 0;
 static char	*respfile = NULL;
 static char	*srcinst = NULL;
 static int	suppressCopyright = 0;
@@ -254,9 +251,6 @@ main(int argc, char *argv[])
 	VFP_T			*pkgmapVfp;	/* "../pkgmap" file */
 	boolean_t		run_request_as_root = B_FALSE;
 	char			**np;
-	char			*abi_comp_ptr;
-	char			*abi_nm_ptr;
-	char			*abi_sym_ptr;
 	char			*admnfile = NULL;
 	char			*device;
 	char			*p;
@@ -357,7 +351,7 @@ main(int argc, char *argv[])
 	/* parse command line options */
 
 	while ((c = getopt(argc, argv,
-		"?Aa:B:b:Cc:D:d:eFf:GhIiMm:N:noO:p:R:r:StV:vyz")) != EOF) {
+		"?Aa:B:b:Cc:D:d:eFf:GhIiMm:N:nO:p:R:r:StV:vz")) != EOF) {
 
 		switch (c) {
 
@@ -701,13 +695,6 @@ main(int argc, char *argv[])
 			break;
 
 		/*
-		 * Different from pkgadd: This is an old non-ABI package
-		 */
-		case 'o':
-			non_abi_scripts++;
-			break;
-
-		/*
 		 * Different from pkgadd: specify number of parts to package.
 		 */
 		case 'p':
@@ -780,14 +767,6 @@ main(int argc, char *argv[])
 		 */
 		case 'v':
 			pkgverbose++;
-			break;
-
-		/*
-		 * Different from pkgadd: process this package using
-		 * old non-ABI symlinks
-		 */
-		case 'y':
-			set_nonABI_symlinks();
 			break;
 
 		/*
@@ -987,10 +966,6 @@ main(int argc, char *argv[])
 	 * --> assume that the parameter is set to RSCRIPTALT_NOACCESS
 	 * If rscriptalt is set to RSCRIPTALT_ROOT, then run request scripts
 	 * as the "root" user if user "install" is not defined.
-	 * Otherwise, assume rscriptalt is set to RSCRIPTALT_NOACCESS, and run
-	 * request scripts as the "alternative" user if user "install" is not
-	 * defined, as appropriate for the current setting of the NONABI_SCRIPTS
-	 * environment variable.
 	 */
 
 	if (ADMSET(RSCRIPTALT)) {
@@ -1191,18 +1166,6 @@ main(int argc, char *argv[])
 
 	putparam("INST_DATADIR", pkgdev.dirname);
 
-	if (non_abi_scripts) {
-		putparam("NONABI_SCRIPTS", "TRUE");
-	}
-
-	if (nonABI_symlinks()) {
-		putparam("PKG_NONABI_SYMLINKS", "TRUE");
-	}
-
-	if (get_ABI_namelngth()) {
-		putparam("PKG_ABI_NAMELENGTH", "TRUE");
-	}
-
 	/* establish path and oambase */
 
 	if (cmdbin[0] == '\0') {
@@ -1219,14 +1182,6 @@ main(int argc, char *argv[])
 			"%s/%s", instdir, PKGINFO);
 	(void) snprintf(p_pkgmap, sizeof (p_pkgmap),
 			"%s/%s", instdir, PKGMAP);
-
-	/* Read the environment (from pkginfo or '-e') ... */
-	abi_nm_ptr = getenv("PKG_ABI_NAMELENGTH");
-
-	/* Disable the 32 char name limit extension */
-	if (abi_nm_ptr && strncasecmp(abi_nm_ptr, "TRUE", 4) == 0) {
-		(void) set_ABI_namelngth();
-	}
 
 	/*
 	 * This tests the pkginfo and pkgmap files for validity and
@@ -1266,31 +1221,6 @@ main(int argc, char *argv[])
 			/*NOTREACHED*/
 		}
 	}
-
-	/*
-	 * Now do all the various setups based on ABI compliance
-	 */
-
-	/* Read the environment (from pkginfo or '-o') ... */
-	abi_comp_ptr = getenv("NONABI_SCRIPTS");
-
-	/* Read the environment (from pkginfo or '-y') ... */
-	abi_sym_ptr = getenv("PKG_NONABI_SYMLINKS");
-
-	/* bug id 4244631, not ABI compliant */
-	if (abi_comp_ptr && strncasecmp(abi_comp_ptr, "TRUE", 4) == 0) {
-		script_in = PROC_XSTDIN;
-		non_abi_scripts = 1;
-	}
-
-	/* Set symlinks to be processed the old way */
-	if (abi_sym_ptr && strncasecmp(abi_sym_ptr, "TRUE", 4) == 0) {
-		set_nonABI_symlinks();
-	}
-	/*
-	 * At this point, script_in, non_abi_scripts & the environment are
-	 * all set correctly for the ABI status of the package.
-	 */
 
 	if (pt = getenv("MAXINST")) {
 		maxinst = atol(pt);
@@ -1585,7 +1515,7 @@ main(int argc, char *argv[])
 	if ((!rdonly_respfile()) && (preinstallCheck == B_FALSE)) {
 		(void) snprintf(path, sizeof (path),
 			"%s/%s", instdir, REQUEST_FILE);
-		n = reqexec(update, path, non_abi_scripts,
+		n = reqexec(update, path,
 			run_request_as_root);
 		if (in_dryrun_mode()) {
 			set_dr_info(REQUESTEXITCODE, n);
@@ -2704,7 +2634,7 @@ do_pkgask(boolean_t a_run_request_as_root)
 	(void) set_respfile(respfile, srcinst, RESP_WR);
 
 	if (is_a_respfile()) {
-		ckreturn(reqexec(update, path, non_abi_scripts,
+		ckreturn(reqexec(update, path,
 			a_run_request_as_root), ERR_REQUEST);
 	} else {
 		failflag++;

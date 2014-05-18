@@ -70,8 +70,6 @@
 "package name length by <%d> characters. Please specify a package name\n" \
 "that contains no more than <%d> characters."
 
-#define	ERR_DB_GET "unable to retrieve entries from the database."
-#define	ERR_DB_PUT "unable to update the package database."
 #define	ERR_ROOT_SET	"Could not set install root from the environment."
 #define	ERR_ROOT_CMD	"Command line install root contends with environment."
 #define	ERR_CLASSLONG	"classname argument too long"
@@ -118,7 +116,6 @@ struct pinfo **eptlist;
 char	*classname = NULL;
 char	*pkginst;
 char	*uniTmp;
-char 	*abi_sym_ptr;
 char 	*ulim;
 char 	*script;
 
@@ -194,11 +191,6 @@ main(int argc, char **argv)
 		set_limit();
 		clr_ulimit();
 	}
-
-	/* bug id 4244631, not ABI compliant */
-	abi_sym_ptr = getenv("PKG_NONABI_SYMLINKS");
-	if (abi_sym_ptr && strncasecmp(abi_sym_ptr, "TRUE", 4) == 0)
-		set_nonABI_symlinks();
 
 	/* bugId 4012147 */
 	if ((uniTmp = getenv("PKG_NO_UNIFIED")) != NULL)

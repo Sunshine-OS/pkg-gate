@@ -82,7 +82,6 @@ static char *scan_raw_ln(char *targ_name, char *link_name);
 static char	*def_class = "none";
 
 static int	errflg = 0;
-static int	iflag = 0;	/* follow symlinks */
 static int	xflag = 0;	/* confirm contents of files */
 static int	nflag = 0;
 static char	construction[PATH_MAX], mylocal[PATH_MAX];
@@ -97,7 +96,6 @@ main(int argc, char *argv[])
 {
 	int c;
 	char *pt, path[PATH_MAX];
-	char	*abi_sym_ptr;
 	extern char	*optarg;
 	extern int	optind;
 
@@ -108,7 +106,7 @@ main(int argc, char *argv[])
 
 	(void) set_prog_name(argv[0]);
 
-	while ((c = getopt(argc, argv, "xnic:?")) != EOF) {
+	while ((c = getopt(argc, argv, "xnc:?")) != EOF) {
 		switch (c) {
 		    case 'x':	/* include content info */
 			xflag++;
@@ -133,25 +131,11 @@ main(int argc, char *argv[])
 			}
 			break;
 
-		    case 'i':	/* follow symlinks */
-			iflag++;
-			break;
-
 		    default:
 			usage();
 		}
 	}
 
-	if (iflag) {
-		/* follow symlinks */
-		set_nonABI_symlinks();
-	} else {
-		/* bug id 4244631, not ABI compliant */
-		abi_sym_ptr = getenv("PKG_NONABI_SYMLINKS");
-		if (abi_sym_ptr && strncasecmp(abi_sym_ptr, "TRUE", 4) == 0) {
-			set_nonABI_symlinks();
-		}
-	}
 	holdcinfo = !xflag;
 	if (optind == argc) {
 		/* take path list from stdin */
@@ -216,8 +200,7 @@ output(char *path, int n, char *local)
 	 * an existence problem, we fake in a symlink and see if averify
 	 * likes that. If it does, all we have is a risky symlink.
 	 */
-	if ((s = averify(0, &entry.ftype, path, &entry.ainfo)) == VE_EXIST &&
-	    !iflag) {
+	if ((s = averify(0, &entry.ftype, path, &entry.ainfo)) == VE_EXIST) {
 		entry.ftype = 's';	/* try again assuming symlink */
 		/* try to read what it points to */
 		if ((s = readlink(path, mylocal, PATH_MAX)) > 0) {
@@ -462,20 +445,19 @@ findlink(struct cfent *ept, char *path, char *svpath)
 		errflg++;
 	}
 	if ((statbuf.st_mode & S_IFMT) == S_IFLNK) {
-		if (!iflag) {
-			ept->ainfo.local = mylocal;
-			ept->ftype = 's';
-			n = readlink(path, buf, PATH_MAX);
-			if (n <= 0) {
-				progerr(gettext(ERR_RDLINK), path);
-				errflg++;
-				(void) strlcpy(ept->ainfo.local,
-					"unknown", PATH_MAX);
-			} else {
-				(void) strncpy(ept->ainfo.local, buf, n);
-				ept->ainfo.local[n] = '\0';
-			}
+		ept->ainfo.local = mylocal;
+		ept->ftype = 's';
+		n = readlink(path, buf, PATH_MAX);
+		if (n <= 0) {
+			progerr(gettext(ERR_RDLINK), path);
+			errflg++;
+			(void) strlcpy(ept->ainfo.local,
+				"unknown", PATH_MAX);
+		} else {
+			(void) strncpy(ept->ainfo.local, buf, n);
+			ept->ainfo.local[n] = '\0';
 		}
+		
 		return;
 	}
 
