@@ -659,29 +659,6 @@ averify(int fix, char *ftype, char *path, struct ainfo *ainfo)
 				}
 
 			} else if (*ftype == 'c') {
-				int wilddevno = 0;
-				/*
-				 * The next three if's support 2.4 and older
-				 * packages that use "?" as device numbers.
-				 * This should be considered for removal by
-				 * release 2.7 or so.
-				 */
-				if (ainfo->major == BADMAJOR) {
-					ainfo->major = 0;
-					wilddevno = 1;
-				}
-
-				if (ainfo->minor == BADMINOR) {
-					ainfo->minor = 0;
-					wilddevno = 1;
-				}
-
-				if (wilddevno) {
-					wilddevno = 0;
-					logerr(MSG_WLDDEVNO, path,
-					    ainfo->major, ainfo->minor);
-				}
-
 				if (mknod(path, ainfo->mode | S_IFCHR,
 				    makedev(ainfo->major, ainfo->minor)) ||
 				    (stat(path, &status) < 0)) {
@@ -689,29 +666,6 @@ averify(int fix, char *ftype, char *path, struct ainfo *ainfo)
 					return (VE_FAIL);
 				}
 			} else if (*ftype == 'b') {
-				int wilddevno = 0;
-				/*
-				 * The next three if's support 2.4 and older
-				 * packages that use "?" as device numbers.
-				 * This should be considered for removal by
-				 * release 2.7 or so.
-				 */
-				if (ainfo->major == BADMAJOR) {
-					ainfo->major = 0;
-					wilddevno = 1;
-				}
-
-				if (ainfo->minor == BADMINOR) {
-					ainfo->minor = 0;
-					wilddevno = 1;
-				}
-
-				if (wilddevno) {
-					wilddevno = 0;
-					logerr(MSG_WLDDEVNO, path,
-					    ainfo->major, ainfo->minor);
-				}
-
 				if (mknod(path, ainfo->mode | S_IFBLK,
 				    makedev(ainfo->major, ainfo->minor)) ||
 				    (stat(path, &status) < 0)) {
