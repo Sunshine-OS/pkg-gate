@@ -498,28 +498,12 @@ extern int	get_cert_chain(PKG_ERR *, X509 *, STACK_OF(X509) *,
     STACK_OF(X509) *, STACK_OF(X509) **);
 
 /* pkgstr.c */
-void		pkgstrConvertUllToTimeString_r(unsigned long long a_time,
-			char *a_buf, int a_bufLen);
-char		*pkgstrConvertPathToBasename(char *a_path);
-char		*pkgstrConvertPathToDirname(char *a_path);
-char		*pkgstrDup(char *a_str);
-char		*pkgstrLocatePathBasename(char *a_path);
-void		pkgstrScaleNumericString(char *a_buf, unsigned long long scale);
-void		pkgstrAddToken(char **a_old, char *a_new, char a_separator);
 boolean_t	pkgstrContainsToken(char *a_string, char *a_token,
-			char *a_separators);
-void		pkgstrExpandTokens(char **a_old, char *a_string,
-			char a_separator, char *a_separators);
-char		*pkgstrGetToken(char *r_sep, char *a_string, int a_index,
 			char *a_separators);
 void		pkgstrGetToken_r(char *r_sep, char *a_string, int a_index,
 			char *a_separators, char *a_buf, int a_bufLen);
-unsigned long	pkgstrNumTokens(char *a_string, char *a_separators);
 char		*pkgstrPrintf(char *a_format, ...);
 void		pkgstrPrintf_r(char *a_buf, int a_bufLen, char *a_format, ...);
-void		pkgstrRemoveToken(char **r_string, char *a_token,
-			char *a_separators, int a_index);
-void		pkgstrRemoveLeadingWhitespace(char **a_str);
 /* vfpops.c */
 extern int	vfpCheckpointFile(VFP_T **r_destVfp, VFP_T **a_vfp,
 			char *a_path);
