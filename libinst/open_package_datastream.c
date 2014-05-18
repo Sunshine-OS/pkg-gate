@@ -137,49 +137,9 @@ open_package_datastream(int a_argc, char **a_argv, char *a_spoolDir,
 
 	if (a_pkgdev->bdevice != (char *)NULL) {
 		/* package source is block device */
-
-		/*
-		 * _getvol verifies that the specified device is accessible and
-		 * that a volume of the appropriate medium has been inserted.
-		 * _getvol is in libadm.h - delivered by ON as part of SUNWcsl
-		 * is somewhat analagous to getvol(1M) - args are:
-		 *  - char *device
-		 *  - char *label
-		 *  - int options
-		 *  - char *prompt
-		 *  - char *norewind - no rewind device (NULL to use device)
-		 * Returns:
-		 *	0 - okay, label matches
-		 *	1 - device not accessable
-		 *	2 - unknown device (devattr failed)
-		 *	3 - user selected quit
-		 *	4 - label does not match
-		 */
-
-		echoDebug(DBG_ODS_DATASTREAM_BDEV, a_pkgdev->bdevice);
-
-		n = _getvol(a_pkgdev->bdevice, NULL, 0L,
-				MSG_INSERT_VOL, a_pkgdev->norewind);
-
-		switch (n) {
-		case 0:	/* volume open, label matches */
-			if (ds_readbuf(a_pkgdev->cdevice)) {
-				(*r_idsName) = a_pkgdev->cdevice;
-			}
-			break;
-		case 3:	/* user selected quit */
-			quit(3);
-			/* NOTREACHED */
-		case 2:	/* unknown device (devattr failed) */
-			progerr(ERR_UNKNOWN_DEV, a_pkgdev->name);
-			quit(99);
-			/* NOTREACHED */
-		default:	/* device not accessable */
-			progerr(ERR_PKGVOL);
-			logerr(LOG_GETVOL_RET, n);
-			quit(99);
-			/* NOTREACHED */
-		}
+		progerr(ERR_PKGVOL);
+		logerr(LOG_GETVOL_RET, n);
+		quit(99);
 	} else if (a_pkgdev->cdevice != (char *)NULL) {
 		/* package source is character device */
 
@@ -257,25 +217,9 @@ open_package_datastream(int a_argc, char **a_argv, char *a_spoolDir,
 		/* use character device to force rewind of datastream */
 		if ((a_pkgdev->cdevice != (char *)NULL) &&
 			(a_pkgdev->bdevice == (char *)NULL)) {
-			n = _getvol(a_pkgdev->name, NULL, 0L, NULL,
-					a_pkgdev->norewind);
-
-			switch (n) {
-			case 0:	/* volume open, label matches */
-				break;
-			case 3:	/* user selected quit */
-				quit(3);
-				/* NOTREACHED */
-			case 2:	/* unknown device (devattr failed) */
-				progerr(ERR_UNKNOWN_DEV, a_pkgdev->name);
-				quit(99);
-				/* NOTREACHED */
-			default:
-				progerr(ERR_PKGVOL);
-				logerr(LOG_GETVOL_RET, n);
-				quit(99);
-				/* NOTREACHED */
-			}
+			progerr(ERR_PKGVOL);
+			logerr(LOG_GETVOL_RET, n);
+			quit(99);
 		}
 
 		if (chdir(a_pkgdev->dirname)) {

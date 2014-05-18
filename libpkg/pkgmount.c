@@ -45,15 +45,12 @@
 #include <pkgdev.h>
 #include <pkginfo.h>
 #include <sys/types.h>
-#include <devmgmt.h>
 #include <sys/mount.h>
 #include <pkglib.h>
 #include <pkglibmsgs.h>
 #include "pkglocale.h"
 
 extern void	quit(int retcode); 	/* Expected to be declared by caller! */
-/* libadm.a */
-extern int	getvol(char *device, char *label, int options, char *prompt);
 
 #define	CMDSIZ	256
 
@@ -90,8 +87,7 @@ pkgmount(struct pkgdev *devp, char *pkg, int part, int nparts, int getvolflg)
 			 * and error was encountered.
 			 */
 			return (-1);
-		if (getvolflg && (n = getvol(devp->bdevice, NULL,
-		    (devp->rdonly ? 0 : DM_FORMFS|DM_WLABEL), prompt))) {
+		if (getvolflg) {
 			if (n == 3)
 				return (3);
 			if (n == 2)

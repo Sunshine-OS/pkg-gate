@@ -1108,12 +1108,8 @@ main(int argc, char **argv)
 	/* if no device and no url, get and validate default device */
 
 	if ((device == NULL) && (uri == NULL)) {
-		device = devattr("spool", "pathname");
-		if (device == NULL) {
-			progerr(ERR_NODEVICE);
-			quit(1);
-			/* NOTREACHED */
-		}
+		progerr(ERR_NODEVICE);
+		quit(1);
 	}
 
 #if 0

@@ -57,7 +57,6 @@
 #include <pkgstrct.h>
 #include <pkgtrans.h>
 #include <pkgdev.h>
-#include <devmgmt.h>
 #include <pkglib.h>
 #include <pkglibmsgs.h>
 #include <keystore.h>
@@ -77,7 +76,6 @@
 extern char	*pkgdir; 		/* pkgparam.c */
 
 /* libadm.a */
-extern char	*devattr(char *device, char *attribute);
 extern char	*fpkginst(char *pkg, ...);
 extern int	fpkginfo(struct pkginfo *info, char *pkginst);
 extern int	getvol(char *device, char *label, int options, char *prompt);
@@ -178,8 +176,8 @@ pkghead(char *device)
 	else if ((device[0] == '/') && !isdir(device)) {
 		pkgdir = device;
 		return (0);
-	} else if ((pt = devattr(device, "pathname")) != NULL && !isdir(pt)) {
-		pkgdir = pt;
+	} else if (!isdir(pt)) {
+		pkgdir = device;
 		return (0);
 	}
 
@@ -358,15 +356,6 @@ _pkgtrans(char *device1, char *device2, char **pkg, int options,
 	/* check for datastream */
 	ids_name = NULL;
 	if (srcdev.bdevice) {
-		if (n = _getvol(srcdev.bdevice, NULL, 0,
-		    pkg_gt("Insert %v into %p."), srcdev.norewind)) {
-			cleanup();
-			if (n == 3)
-				return (3);
-			progerr(pkg_gt(ERR_TRANSFER));
-			logerr(pkg_gt(MSG_GETVOL));
-			return (1);
-		}
 		if (ds_readbuf(srcdev.cdevice))
 			ids_name = srcdev.cdevice;
 	}
@@ -472,9 +461,7 @@ _pkgtrans(char *device1, char *device2, char **pkg, int options,
 
 	if (ids_name) {
 		char	template[] = "/var/tmp/ptXXXXXX";
-		if (srcdev.cdevice && !srcdev.bdevice &&
-		(n = _getvol(srcdev.cdevice, NULL, 0, NULL,
-		    srcdev.norewind))) {
+		if (srcdev.cdevice && !srcdev.bdevice) {
 			cleanup();
 			if (n == 3)
 				return (3);
@@ -544,9 +531,7 @@ _pkgtrans(char *device1, char *device2, char **pkg, int options,
 	if (options & PT_ODTSTREAM) {
 		char line[128];
 
-		if (!dstdev.pathname &&
-		    (n = _getvol(ods_name, NULL, DM_FORMAT, NULL,
-		    dstdev.norewind))) {
+		if (!dstdev.pathname) {
 			cleanup();
 			if (n == 3)
 				return (3);
@@ -1513,8 +1498,6 @@ pkgxfer(char *srcinst, int options)
 			(void) sprintf(prompt,
 			    pkg_gt("Insert %%v %d of %d into %%p"),
 			    ds_volno, ds_volcnt);
-			if (n = getvol(ods_name, NULL, DM_FORMAT, prompt))
-				return (n);
 			if ((ds_fd = open(dstdev.cdevice, O_WRONLY
 			    | O_LARGEFILE)) < 0) {
 				progerr(pkg_gt(ERR_TRANSFER));
@@ -1674,9 +1657,6 @@ pkgxfer(char *srcinst, int options)
 				(void) sprintf(prompt,
 				    pkg_gt("Insert %%v %d of %d into %%p"),
 				    ds_volno, ds_volcnt);
-				if (n = getvol(ods_name, NULL, DM_FORMAT,
-				    prompt))
-					return (n);
 				if ((ds_fd = open(dstdev.cdevice, 1)) < 0) {
 					progerr(pkg_gt(ERR_TRANSFER));
 					logerr(pkg_gt(MSG_OPEN),

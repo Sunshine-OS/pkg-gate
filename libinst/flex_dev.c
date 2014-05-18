@@ -58,9 +58,6 @@ flex_device(char *device_name, int dev_ok)
 	if (!device_name || !*device_name)		/* NULL or empty */
 		return (np);
 
-	if (dev_ok == 1 && listdev(np) != (char **) NULL) /* device.tab */
-		return (np);
-
 	if (!strncmp(np, "/dev", 4))			/* /dev path */
 		return (np);
 

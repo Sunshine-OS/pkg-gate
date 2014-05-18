@@ -44,8 +44,6 @@
 #include <pkgdev.h>
 #include <pkglib.h>
 
-extern char	*devattr(char *device, char *attribute); 	/* libadm.a */
-
 int
 devtype(char *alias, struct pkgdev *devp)
 {
@@ -65,59 +63,9 @@ devtype(char *alias, struct pkgdev *devp)
 		}
 	}
 
-	/* see if alias represents a mountable device (e.g., a floppy) */
-	if ((devp->mount = devattr(alias, "mountpt")) != NULL &&
-	    devp->mount[0] != 0) {
-		devp->bdevice = devattr(alias, "bdevice");
-		if (!devp->bdevice || !devp->bdevice[0]) {
-			if (devp->bdevice) {
-				free(devp->bdevice);
-				devp->bdevice = NULL;
-			}
-			return (-1);
-		}
-		devp->dirname = devp->mount;
-	} else if (devp->mount) {
-		free(devp->mount);
-		devp->mount = NULL;
-	}
-
-	devp->cdevice = devattr(alias, "cdevice");
-	if (devp->cdevice && devp->cdevice[0])  {
-		/* check for capacity */
-		if (name = devattr(alias, "capacity")) {
-			if (name[0])
-				devp->capacity = atoll(name);
-			free(name);
-		}
-		/* check for norewind device */
-		devp->norewind = devattr(alias, "norewind");
-		if (devp->norewind && !devp->norewind[0]) {
-			free(devp->norewind);
-			devp->norewind = NULL;
-		}
-
-		/* mountable devices will always have associated raw device */
-		return (0);
-	}
-	if (devp->cdevice) {
-		free(devp->cdevice);
-		devp->cdevice = NULL;
-	}
-	/*
-	 * if it is not a raw device, it must be a directory or a regular file
-	 */
-	name = devattr(alias, "pathname");
-	if (!name || !name[0]) {
-		/* Assume a regular file */
-		if (name)
-			free(name);
-		devp->pathname = alias;
-		return (0);
-	}
-	if (!isdir(name))
-		devp->dirname = name;
+	if (!isdir(alias))
+		devp->dirname = alias;
 	else
-		devp->pathname = name;
+		devp->pathname = alias;
 	return (0);
 }

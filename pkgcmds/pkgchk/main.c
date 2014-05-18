@@ -392,8 +392,7 @@ main(int argc, char *argv[])
 		if (qflag || xflag || nflag || envfile)
 			usage();
 		tmpdir = NULL;
-		if ((spooldir = devattr(device, "pathname")) == NULL)
-			spooldir = device;
+		spooldir = device;
 		if (isdir(spooldir)) {
 			char	template[] = "/var/tmp/spoolXXXXXX";
 			close(mkstemp(template));

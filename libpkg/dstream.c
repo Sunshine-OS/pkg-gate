@@ -61,33 +61,13 @@
 #endif 
 
 /* libadm.a */
-extern char	*devattr(char *device, char *attribute);
 extern int	pkgnmchk(register char *pkg, register char *spec,
 				int presvr4flg);
-extern int	getvol(char *device, char *label, int options, char *prompt);
 
 #define	CMDSIZ	512
 #define	LSIZE	128
 #define	DDPROC		BINDIR "/dd"
 #define	CPIOPROC	BINDIR "/cpio"
-
-/* device types */
-
-#define	G_TM_TAPE	1   /* Tapemaster controller */
-#define	G_XY_DISK	3   /* xy disks */
-#define	G_SD_DISK	7   /* scsi sd disk */
-#define	G_XT_TAPE	8   /* xt tapes */
-#define	G_SF_FLOPPY	9   /* sf floppy */
-#define	G_XD_DISK	10  /* xd disks */
-#define	G_ST_TAPE	11  /* scsi tape */
-#define	G_NS		12  /* noswap pseudo-dev */
-#define	G_RAM		13  /* ram pseudo-dev */
-#define	G_FT		14  /* tftp */
-#define	G_HD		15  /* 386 network disk */
-#define	G_FD		16  /* 386 AT disk */
-#define	G_FILE		28  /* file, not a device */
-#define	G_NO_DEV	29  /* device does not require special treatment */
-#define	G_DEV_MAX	30  /* last valid device type */
 
 struct dstoc {
 	int	cnt;
@@ -633,8 +613,6 @@ ds_getnextvol(char *device)
 	(void) sprintf(prompt,
 	    pkg_gt("Insert %%v %d of %d into %%p"),
 	    ds_volno, ds_volcnt);
-	if (n = getvol(device, NULL, 0, prompt))
-		return (n);
 	if ((ds_fd = open(device, O_RDONLY | O_LARGEFILE)) < 0)
 		return (-1);
 	if (ds_ginit(device) < 0) {
@@ -820,41 +798,7 @@ BIO_ds_dump_header(PKG_ERR *err, BIO *bio)
 int
 ds_ginit(char *device)
 {
-	int oflag;
-	char *pbufsize, cmd[CMDSIZ];
-	int fd2, fd;
-
-	if ((pbufsize = devattr(device, "bufsize")) != NULL) {
-		ds_bufsize = atoi(pbufsize);
-		(void) free(pbufsize);
-	} else
-		ds_bufsize = BLK_SIZE;
-	oflag = fcntl(ds_fd, F_GETFL, 0);
-	if (ds_bufsize > BLK_SIZE) {
-		if (oflag & O_WRONLY)
-			fd = 1;
-		else
-			fd = 0;
-		fd2 = fcntl(fd, F_DUPFD, fd);
-		(void) close(fd);
-		fcntl(ds_fd, F_DUPFD, fd);
-		if (fd)
-			sprintf(cmd, "%s obs=%d 2>/dev/null", DDPROC,
-			    ds_bufsize);
-		else
-			sprintf(cmd, "%s ibs=%d 2>/dev/null", DDPROC,
-			    ds_bufsize);
-		if ((ds_pp = popen(cmd, fd ? "w" : "r")) == NULL) {
-			progerr(pkg_gt(ERR_TRANSFER));
-			logerr(pkg_gt(MSG_POPEN), cmd, errno);
-			return (-1);
-		}
-		(void) close(fd);
-		fcntl(fd2, F_DUPFD, fd);
-		(void) close(fd2);
-		ds_realfd = ds_fd;
-		ds_fd = fileno(ds_pp);
-	}
+	ds_bufsize = BLK_SIZE;
 	return (ds_bufsize);
 }
 

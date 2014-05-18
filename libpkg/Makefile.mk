@@ -60,12 +60,12 @@ pkgexecl.o: pkgexecl.c pkglocale.h pkglibmsgs.h ./pkglib.h \
 pkgexecv.o: pkgexecv.c ./pkglib.h ../hdrs/pkgdev.h ../hdrs/pkgstrct.h \
   ./pkgerr.h ./keystore.h ./cfext.h ./pkglibmsgs.h pkglocale.h ../hdrs/libadm.h
 pkgmount.o: pkgmount.c ../hdrs/pkgdev.h ../hdrs/pkginfo.h \
-  ../hdrs/devmgmt.h ./pkglib.h ../hdrs/pkgstrct.h ./pkgerr.h ./keystore.h \
+  ./pkglib.h ../hdrs/pkgstrct.h ./pkgerr.h ./keystore.h \
   ./cfext.h ./pkglibmsgs.h pkglocale.h
 pkgstr.o: pkgstr.c ./pkglib.h ../hdrs/pkgdev.h ../hdrs/pkgstrct.h \
   ./pkgerr.h ./keystore.h ./cfext.h pkglocale.h
 pkgtrans.o: pkgtrans.c ../hdrs/pkginfo.h ../hdrs/pkgstrct.h \
-  ../hdrs/pkgtrans.h ../hdrs/pkgdev.h ../hdrs/devmgmt.h ./pkglib.h \
+  ../hdrs/pkgtrans.h ../hdrs/pkgdev.h ./pkglib.h \
   ./pkgerr.h ./keystore.h ./cfext.h ./pkglibmsgs.h ./keystore.h \
   pkglocale.h pkgerr.h ../hdrs/libadm.h
 pkgweb.o: pkgweb.c ../hdrs/libadm.h

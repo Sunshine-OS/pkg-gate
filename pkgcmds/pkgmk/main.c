@@ -302,11 +302,8 @@ main(int argc, char *argv[])
 	}
 
 	if (device == NULL) {
-		device = devattr(SPOOLDEV, "pathname");
-		if (device == NULL) {
-			progerr(gettext(ERR_DEVICE), SPOOLDEV);
-			exit(99);
-		}
+		progerr(gettext(ERR_DEVICE), SPOOLDEV);
+		exit(99);
 	}
 
 	if (protofile == NULL) {

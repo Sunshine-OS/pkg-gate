@@ -170,83 +170,15 @@ extern int	ckyorn __P((char *yorn, char *defstr, char *error, char *help,
 				char *prompt));
 
 /*
- * devattr.c
- */
-extern char	*devattr __P((char *device, char *attribute));
-
-/*
- * devreserv.c
- */
-extern char	*_rsvtabpath __P((void));
-extern int	_openlkfile __P((void));
-extern int	_closelkfile __P((void));
-extern int	unreserv __P((long key, char *device));
-extern char	**devreserv __P((long key, char **rsvlst[]));
-extern int	devfree __P((long key, char *device));
-extern struct	reservdev	**reservdev __P((void));
-
-/*
- * devtab.c
- */
-extern void	_setdevtab __P((void));
-extern void	_enddevtab __P((void));
-extern char	*_devtabpath __P((void));
-extern int	_opendevtab __P((char *mode));
-extern int	_validalias __P((char *alias));
-extern struct	devtabent	*_getdevtabent __P((void));
-extern void	_freedevtabent __P((struct devtabent *ent));
-extern struct	devtabent	*_getdevrec __P((char *device));
-
-/*
- * dgrpent.c
- */
-extern void	_setdgrptab __P((void));
-extern void	_enddgrptab __P((void));
-extern char	*_dgrptabpath __P((void));
-extern int	_opendgrptab __P((char *mode));
-extern struct	dgrptabent	*_getdgrptabent __P((void));
-extern void	_freedgrptabent __P((struct dgrptabent *ent));
-extern struct	dgrptabent	*_getdgrprec __P((char *dgroup));
-
-/*
  * fulldevnm.c
  */
 extern char	*getfullblkname __P((char *cp));
 extern char	*getfullrawname __P((char *cp));
 
 /*
- * getdev.c
- */
-extern char	**getdev __P((char **devices, char **criteria, int options));
-
-/*
- * getdgrp.c
- */
-extern char	**getdgrp __P((char **dgroups, char **criteria, int options));
-
-/*
  * getinput.c
  */
 extern int	getinput __P((char *s));
-
-/*
- * getvol.c
- */
-extern int	getvol __P((char *device, char *label, int options,
-				char *prompt));
-extern int	_getvol __P((char *device, char *label, int options,
-				char *prompt, char *norewind));
-extern void	doremovecmd __P((char *device, int echo));
-
-/*
- * listdev.c
- */
-extern char	**listdev __P((char *device));
-
-/*
- * listdgrp.c
- */
-extern char	**listdgrp __P((char *dgroup));
 
 /*
  * memory.c
@@ -283,24 +215,6 @@ extern void	set_PKGADM(char *newpath);
 extern void	set_PKGLOC(char *newpath);
 extern void	set_install_root(char *);
 extern char	*get_install_root(void);
-
-/*
- * putdev.c
- */
-extern int	_putdevtabrec __P((FILE *stream, struct devtabent *rec));
-extern int	_adddevtabrec __P((char *alias, char **attrval));
-extern int	_moddevtabrec __P((char *device, char **attrval));
-extern int	_rmdevtabrec __P((char *device));
-extern int	_rmdevtabattrs __P((char *device, char **attributes,
-				    char ***notfounds));
-
-/*
- * putdgrp.c
- */
-extern int	_putdgrptabrec __P((FILE *stream, struct dgrptabent *rec));
-extern int	_adddgrptabrec __P((char *dgrp, char **members));
-extern int	_rmdgrptabrec __P((char *dgrp));
-extern int	_rmdgrpmems __P((char *dgrp, char **mems, char ***notfounds));
 
 /*
  * puterror.c
