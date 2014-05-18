@@ -1,13 +1,18 @@
-Release ...
-* Fixed "?" for owner and group entries (Dave Grothe).
-* The user input validation tools "ckgid", "ckint", "ckitem", "ckkeywd",
-  "ckpath", "ckrange", "ckstr", "cktime", "ckuid", and "ckyorn" have been
-  added along with their "get...", "disp...", "err...", "help...", and
-  "val..." variants.
-* An OpenSolaris-derived implementation of getopt() is now included,
-  defeating the argument reordering of the glibc variant.
-* Fixed a makefile error that prevented compilation on CentOS 5.
-* It is now possible to use flex for compilation (patch by Peter Kruse).
-
-Release 070227
-* Initial release.
+b1:
+* Package name changed to be fewer than 9 characters.
+* Removed various unused chunks of code.
+* Removed code for installing packages via HTTP
+* Removed Live Continuation code (never completed)
+* Removed Solaris 2.7 code
+* Removed special_contents handling
+* Removed EXCEPTION_PKG_LIST code
+* Removed Sun WebStart code
+* Removed vtoc and rdwr_vtoc.c (they were unused)
+* Removed support for pre-SVR4 packages
+* Removed SUNOS41 code
+* Removed u3b2 code 
+* Default 'instance' setting changed from unique to overrwrite (this allows
+  upgrading of packages)
+* Use /usr/5bin/sh rather than /sbin/sh, as /sbin/sh was disturbing FreeBSD
+* Moved from static pkginfo to pkginfo.in model
+* Ported to FreeBSD
