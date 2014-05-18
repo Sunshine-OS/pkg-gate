@@ -412,12 +412,6 @@ extern int	ds_next(char *, char *);
 extern int	ds_readbuf(char *device);
 extern int	epclose(FILE *pp);
 extern int	esystem(char *cmd, int ifd, int ofd);
-extern void	e_free_args(argArray_t *a_args);
-extern argArray_t *e_new_args(int initialCount);
-/*PRINTFLIKE2*/
-extern boolean_t	e_add_arg(argArray_t *a_args, char *a_format, ...);
-extern int	e_get_argc(argArray_t *a_args);
-extern char	**e_get_argv(argArray_t *a_args);
 extern int	e_ExecCmdArray(int *r_status, char **r_results,
 			char *a_inputFile, char *a_cmd, char **a_args);
 extern int	e_ExecCmdList(int *r_status, char **r_results,
