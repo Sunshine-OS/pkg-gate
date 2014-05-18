@@ -917,3 +917,28 @@ checksum_off(void)
 {
 	enable_checksum = 0;
 }
+
+/*
+ * Name:		path_valid
+ * Description:	Checks a string for being a valid path
+ *
+ * Arguments:	path - path to validate
+ *
+ * Returns :	B_TRUE - success, B_FALSE otherwise.
+ *		B_FALSE means path was null, too long (>PATH_MAX),
+ *		or too short (<1)
+ */
+boolean_t
+path_valid(char *path)
+{
+	if (path == NULL) {
+		return (B_FALSE);
+	} else if (strlen(path) > PATH_MAX) {
+		return (B_FALSE);
+	} else if (strlen(path) >= 1) {
+		return (B_TRUE);
+	} else {
+		/* path < 1 */
+		return (B_FALSE);
+	}
+}

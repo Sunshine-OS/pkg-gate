@@ -172,7 +172,7 @@ scriptvfy.o: scriptvfy.c ../libpkg/pkglib.h
 setadmin.o: setadmin.c ../hdrs/pkglocs.h ../libpkg/pkglib.h \
   ../hdrs/pkgdev.h ../hdrs/pkgstrct.h ../libpkg/pkgerr.h \
   ../libpkg/keystore.h ../libpkg/cfext.h ../libpkg/pkgerr.h \
-  ../libpkg/pkgweb.h ../hdrs/install.h ../hdrs/libinst.h \
+  ../hdrs/install.h ../hdrs/libinst.h \
   ../hdrs/pkginfo.h ../libpkg/cfext.h ../hdrs/install.h ../hdrs/libadm.h \
    ../hdrs/sys/dklabel.h ../hdrs/valtools.h \
   ../hdrs/messages.h

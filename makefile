@@ -33,7 +33,7 @@ PKGROOT = /var/tmp/heirloom-pkgtools
 PKGTEMP = /var/tmp
 PKGPROTO = pkgproto
 
-SSOSpkgcmds.pkg: all
+SSOSspkg.pkg: all
 	rm -rf $(PKGROOT)
 	mkdir -p $(PKGROOT)
 	$(MAKE) ROOT=$(PKGROOT) install

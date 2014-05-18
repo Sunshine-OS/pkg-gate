@@ -80,7 +80,6 @@
 
 #include <pkglib.h>
 #include <pkgerr.h>
-#include <pkgweb.h>
 
 /*
  * local pkg command library includes
@@ -310,16 +309,10 @@ main(int argc, char **argv)
 {
 	extern int	resolvepath(const char *path, char *buf, size_t bufsiz);
 	PKG_ERR			*err = NULL;
-#ifdef	__sun
-	WebScheme		scheme = none;
-#endif
 	char			**category = NULL;
 	char			*altBinDir = (char *)NULL;
 	char			*catg_arg = NULL;
 	char			*device = NULL;		/* dev pkg stored on */
-#ifdef __sun
-	char			*dwnld_dir = NULL;
-#endif
 	char			*keystore_file = NULL;
 	char			*p;
 	char			*q;
@@ -333,10 +326,6 @@ main(int argc, char **argv)
 	int			ignore_sig = 0;
 	int			n;
 	int			repeat;
-#ifdef __sun
-	int			retries = NET_RETRIES_DEFAULT;
-	int			timeout = NET_TIMEOUT_DEFAULT;
-#endif
 	keystore_handle_t	keystore = NULL;
 	struct sigaction	nact;
 	struct sigaction	oact;
@@ -375,12 +364,6 @@ main(int argc, char **argv)
 
 	/* set default password prompt for encrypted packages */
 
-	set_passphrase_prompt(MSG_PASSPROMPT);
-
-	/* initialize security operations structures and libraries */
-
-	sec_init();
-
 	/*
 	 * ********************************************************************
 	 * parse command line options
@@ -388,7 +371,7 @@ main(int argc, char **argv)
 	 */
 
 	while ((c = getopt(argc, argv,
-		"?Aa:b:B:Cc:D:d:GhIik:MnO:P:R:r:Ss:tV:vx:Y:zZ")) != EOF) {
+		"?Aa:b:B:Cc:D:d:GhIik:MnO:R:r:Ss:tV:vx:Y:zZ")) != EOF) {
 		switch (c) {
 
 		/*
@@ -481,26 +464,7 @@ main(int argc, char **argv)
 				quit(1);
 				/* NOTREACHED */
 			}
-
-#ifdef	__sun
-			if (strncmp(optarg, HTTP, 7) == 0) {
-				scheme = web_http;
-			} else if (strncmp(optarg, HTTPS, 8) == 0) {
-				scheme = web_https;
-			}
-
-			if (scheme == web_https || scheme == web_http) {
-				uri = optarg;
-				if ((device = malloc(PATH_MAX)) == NULL) {
-					progerr(ERR_MEM);
-					exit(1);
-				}
-				(void) memset(device, '\0', PATH_MAX);
-			} else
-#endif	/* __sun */
-			{
-				device = flex_device(optarg, 1);
-			}
+			device = flex_device(optarg, 1);
 			break;
 
 		/*
@@ -691,23 +655,6 @@ main(int argc, char **argv)
 		case 'n':
 			nointeract++;
 			(void) echoSetFlag(B_FALSE);
-			break;
-
-		/*
-		 * Public interface: Password to use to decrypt keystore
-		 * specified with -k, if required. See PASS PHRASE
-		 * ARGUMENTS for more information about the format of this
-		 * option's argument.
-		 */
-		case 'P':
-			set_passphrase_passarg(optarg);
-			if (ci_strneq(optarg, "pass:", 5)) {
-				/*
-				 * passwords on the command line are highly
-				 * insecure.  complain.
-				 */
-				logerr(PASSWD_CMDLINE, "pass:<pass>");
-			}
 			break;
 
 		/*
@@ -984,14 +931,6 @@ main(int argc, char **argv)
 		return (1);
 	}
 
-	/* cannot use response file and web address together */
-
-	if (respfile && uri) {
-		progerr(ERR_RESPFILE_AND_URI);
-		usage();
-		return (1);
-	}
-
 	/* cannot use response file/not-interactive and spool-to directory */
 
 	if (spoolDir && nointeract) {
@@ -1143,107 +1082,6 @@ main(int argc, char **argv)
 
 	echoDebug(DBG_PKGADD_TMPDIR, tmpdir);
 
-	/*
-	 * setup and prepare secure package operations
-	 */
-
-	/* initialize error object used by security functions */
-
-	err = pkgerr_new();
-
-	/* validate keystore file */
-
-	if (!check_keystore_admin(&keystore_file)) {
-		progerr(ERR_ADM_KEYSTORE);
-		quit(1);
-		/* NOTREACHED */
-	}
-
-#ifdef __sun
-	/* if uri provided, establish session */
-
-	if (uri != NULL) {
-		boolean_t	b;
-		int		len;
-		char		*bname = (char *)NULL;
-
-		set_web_install();
-
-		if (!get_proxy_port(err, &proxy, &proxy_port)) {
-			pkgerr(err);
-			quit(1);
-			/* NOTREACHED */
-		}
-
-		if (proxy == NULL) {
-			if (!get_proxy_port_admin(&proxy, &proxy_port)) {
-				progerr(ERR_ADM_PROXY);
-				quit(1);
-				/* NOTREACHED */
-			}
-		}
-
-		if ((retries = web_ck_retries()) == 0) {
-			pkgerr(err);
-			quit(1);
-			/* NOTREACHED */
-		}
-
-		if ((timeout = web_ck_timeout()) == 0) {
-			pkgerr(err);
-			quit(1);
-			/* NOTREACHED */
-		}
-
-		/* create temporary directory */
-
-		b = setup_temporary_directory(&dwnld_dir, tmpdir, "dwnld");
-		if (b != B_TRUE) {
-			progerr(ERR_DWNLDTEMPDIR, tmpdir, strerror(errno));
-			quit(1);
-			/* NOTREACHED */
-		}
-		canonize_slashes(dwnld_dir);
-
-		/* register with quit() so directory is removed on exit */
-
-		quitSetDwnldTmpdir(dwnld_dir);	/* DO NOT FREE() */
-
-		/* open keystore if this is a secure download */
-		if (scheme == web_https) {
-			if (open_keystore(err, keystore_file,
-			    get_prog_name(),  pkg_passphrase_cb,
-			    KEYSTORE_DFLT_FLAGS, &keystore) != 0) {
-				pkgerr(err);
-				web_cleanup();
-				quit(1);
-				/* NOTREACHED */
-			}
-		}
-
-		if (!web_session_control(err, uri, dwnld_dir, keystore, proxy,
-			proxy_port, retries, timeout, nointeract, &bname)) {
-			pkgerr(err);
-			web_cleanup();
-			quit(1);
-			/* NOTREACHED */
-		}
-
-		/*
-		 * reset device to point to newly-downloaded file; note
-		 * when (scheme == web_https || scheme == web_http) that
-		 * device gets preloaded with a pointer to PATH_MAX bytes
-		 * allocated via malloc().
-		 */
-
-		len = snprintf(device, PATH_MAX, "%s/%s", dwnld_dir, bname);
-		if ((len < 0) || (len >= PATH_MAX)) {
-			progerr(ERR_DIR_CONST, tmpdir);
-			quit(1);
-			/* NOTREACHED */
-		}
-	}
-#endif	/* __sun */
 
 	/*
 	 * validate the package source device - return pkgdev info that
@@ -3196,84 +3034,6 @@ get_package_list(char ***r_pkgList, char **a_argv, char *a_categories,
 			/* NOTREACHED */
 	}
 
-#ifdef	USE_KEYSTORE
-	/*
-	 * If we are not ignoring signatures, check the package's
-	 * signature if one exists.  pkgask doesn't care about
-	 * signatures though.
-	 */
-	if (!askflag && !a_ignoreSignatures && a_idsName &&
-		(web_ck_authentication() == AUTH_QUIT)) {
-
-		PKCS7		*sig = NULL;
-		STACK_OF(X509)	*cas = NULL;
-
-		/* Retrieve signature */
-		if (!get_signature(a_err, a_idsName, &pkgdev, &sig)) {
-			pkgerr(a_err);
-			web_cleanup();
-			quit(1);
-			/* NOTREACHED */
-		}
-
-		if (sig != NULL) {
-			/* Found signature.  Verify. */
-			if (a_httpProxyName != NULL) {
-				/* Proxy will be needed for OCSP */
-				proxytmp = malloc(sizeof (url_hport_t));
-				if (url_parse_hostport(a_httpProxyName,
-					proxytmp, a_httpProxyPort)
-					!= URL_PARSE_SUCCESS) {
-					progerr(ERR_PROXY,
-						a_httpProxyName);
-					PKCS7_free(sig);
-					quit(99);
-					/* NOTREACHED */
-				}
-			}
-
-			/* Start with fresh error stack */
-			pkgerr_clear(a_err);
-
-			if (a_keystore == NULL) {
-				/* keystore not opened - open it */
-				if (open_keystore(a_err, a_keystoreFile,
-					get_prog_name(), pkg_passphrase_cb,
-					KEYSTORE_DFLT_FLAGS,
-					&a_keystore) != 0) {
-					pkgerr(a_err);
-					web_cleanup();
-					PKCS7_free(sig);
-					quit(1);
-					/* NOTREACHED */
-				}
-			}
-
-			/* get trusted CA certs */
-			if (find_ca_certs(a_err, a_keystore, &cas) != 0) {
-				pkgerr(a_err);
-				PKCS7_free(sig);
-				web_cleanup();
-				quit(1);
-				/* NOTREACHED */
-			}
-
-			/* Verify signature */
-			if (!ds_validate_signature(a_err, &pkgdev,
-				&a_argv[optind], a_idsName, sig,
-				cas, proxytmp, nointeract)) {
-				pkgerr(a_err);
-				quit(99);
-				/* NOTREACHED */
-			}
-
-			/* cleanup */
-			PKCS7_free(sig);
-			web_cleanup();
-			pkgerr_free(a_err);
-		}
-	}
-#endif	/* USE_KEYSTORE */
 
 	/* order package list if input data stream specified */
 

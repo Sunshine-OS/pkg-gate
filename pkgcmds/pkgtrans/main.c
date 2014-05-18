@@ -55,12 +55,6 @@ static keystore_handle_t	keystore = NULL;
 static void	usage(void);
 static void	trap(int signo);
 
-#define	PASSWD_CMDLINE \
-		"## WARNING: USING <%s> MAKES PASSWORD " \
-		"VISIBLE TO ALL USERS."
-
-#define	PASSPHRASE_PROMPT	"Enter keystore password:"
-#define	KEYSTORE_OPEN	"Retrieving signing certificates from keystore <%s>"
 #define	PARAM_LEN		"Parameter <%s> too long"
 
 int
@@ -84,7 +78,7 @@ main(int argc, char *argv[])
 
 	(void) set_prog_name(argv[0]);
 
-	while ((c = getopt(argc, argv, "ga:P:k:snio?")) != EOF) {
+	while ((c = getopt(argc, argv, "ga:k:snio?")) != EOF) {
 		switch (c) {
 		    case 'n':
 			options |= PT_RENAME;
@@ -115,17 +109,6 @@ main(int argc, char *argv[])
 			keystore_alias = optarg;
 			break;
 
-		    case 'P':
-			set_passphrase_passarg(optarg);
-			if (ci_strneq(optarg, "pass:", 5)) {
-				/*
-				 * passwords on the command line are highly
-				 * insecure.  complain.
-				 */
-				logerr(gettext(PASSWD_CMDLINE), "pass:<pass>");
-			}
-			break;
-
 		    default:
 			usage();
 			return (1);
@@ -144,55 +127,8 @@ main(int argc, char *argv[])
 		return (1);
 	}
 
-	if (create_sig) {
-		sec_init();
-		err = pkgerr_new();
-
-		/* figure out which keystore to use */
-		if (keystore_file == NULL) {
-			if (geteuid() == 0) {
-				/* we are superuser, so use their keystore */
-				keystore_file = PKGSEC;
-			} else {
-				if ((homedir = getenv("HOME")) == NULL) {
-				/*
-				 * not superuser, but no home dir, so
-				 * use superuser's keystore
-				 */
-					keystore_file = PKGSEC;
-				} else {
-				/* $HOME/.pkg/security\0 */
-					homelen = strlen(homedir) + 15;
-					keystore_file =
-					    malloc(strlen(homedir) + 15);
-					if (((len = snprintf(keystore_file,
-					    homelen, "%s/%s", homedir,
-					    ".pkg/security")) < 0) ||
-					    (len >= homelen)) {
-						logerr(gettext(PARAM_LEN),
-						    "$HOME");
-						quit(1);
-					}
-				}
-			}
-		}
-
-		logerr(gettext(KEYSTORE_OPEN), keystore_file);
-
-		set_passphrase_prompt(gettext(PASSPHRASE_PROMPT));
-
-		/* open keystore for reading */
-		if (open_keystore(err, keystore_file, get_prog_name(),
-		    pkg_passphrase_cb, KEYSTORE_DFLT_FLAGS, &keystore) != 0) {
-			pkgerr(err);
-			pkgerr_free(err);
-			quit(1);
-		}
-
-	} else {
-		/* no signature, so don't use a keystore */
-		keystore = NULL;
-	}
+	/* no signature, so don't use a keystore */
+	keystore = NULL;
 
 	ret = pkgtrans(flex_device(argv[optind], 1),
 	    flex_device(argv[optind+1], 1), &argv[optind+2], options,

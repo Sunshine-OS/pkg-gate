@@ -63,7 +63,6 @@
  */
 
 #include <pkglib.h>
-#include <pkgweb.h>
 #include <pkglocale.h>
 
 /*

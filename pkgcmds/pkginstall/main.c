@@ -58,7 +58,6 @@
 #include <assert.h>
 #include <spmizones_api.h>
 #include <pkglib.h>
-#include <pkgweb.h>
 #include <pkglocale.h>
 #include <install.h>
 #include <libinst.h>

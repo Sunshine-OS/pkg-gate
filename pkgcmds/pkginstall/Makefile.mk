@@ -63,7 +63,7 @@ instvol.o: instvol.c ../../hdrs/pkgstrct.h ../../hdrs/pkgdev.h \
   ../../hdrs/pkglocs.h ../../hdrs/archives.h \
   ../../libspmizones/spmizones_api.h ../../libpkg/pkglib.h \
   ../../libpkg/pkgerr.h ../../libpkg/keystore.h ../../libpkg/cfext.h \
-  ../../libpkg/pkgweb.h ../../libpkg/pkglocale.h ../pkgadm/pkgadm.h \
+  ../../libpkg/pkglocale.h ../pkgadm/pkgadm.h \
   ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
   ../../libgendb/genericdb.h ../../hdrs/libinst.h ../../hdrs/pkginfo.h \
   ../../libpkg/cfext.h ../../hdrs/install.h ../../hdrs/install.h \
@@ -74,7 +74,7 @@ main.o: main.c ../../hdrs/pkgstrct.h ../../hdrs/pkginfo.h \
   ../../hdrs/pkgdev.h ../../hdrs/pkglocs.h \
   ../../libspmizones/spmizones_api.h ../../libpkg/pkglib.h \
   ../../libpkg/pkgerr.h ../../libpkg/keystore.h ../../libpkg/cfext.h \
-  ../../libpkg/pkgweb.h ../../libpkg/pkglocale.h ../../hdrs/install.h \
+  ../../libpkg/pkglocale.h ../../hdrs/install.h \
   ../../hdrs/libinst.h ../../libpkg/cfext.h ../../hdrs/install.h \
   ../../hdrs/libadm.h ../ ../../hdrs/sys/dklabel.h \
   ../../hdrs/valtools.h ../../hdrs/dryrun.h ../../hdrs/messages.h \

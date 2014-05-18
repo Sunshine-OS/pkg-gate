@@ -7,9 +7,9 @@ INC = -I. -I../hdrs -I../libgendb
 OBJ = canonize.o ckparam.o ckvolseq.o cvtpath.o dbsql.o devtype.o \
 	dstream.o fmkdir.o gpkglist.o gpkgmap.o isdir.o keystore.o \
 	logerr.o mappath.o ncgrpw.o nhash.o pkgerr.o \
-	pkgexecl.o pkgexecv.o pkgmount.o pkgstr.o pkgtrans.o pkgweb.o \
+	pkgexecl.o pkgexecv.o pkgmount.o pkgstr.o pkgtrans.o \
 	ppkgmap.o progerr.o putcfile.o rrmdir.o runcmd.o \
-	security.o srchcfile.o tputcfent.o verify.o vfpops.o
+	srchcfile.o tputcfent.o verify.o vfpops.o
 
 all: libpkgu.a
 
@@ -68,7 +68,6 @@ pkgtrans.o: pkgtrans.c ../hdrs/pkginfo.h ../hdrs/pkgstrct.h \
   ../hdrs/pkgtrans.h ../hdrs/pkgdev.h ./pkglib.h \
   ./pkgerr.h ./keystore.h ./cfext.h ./pkglibmsgs.h ./keystore.h \
   pkglocale.h pkgerr.h ../hdrs/libadm.h
-pkgweb.o: pkgweb.c ../hdrs/libadm.h
 ppkgmap.o: ppkgmap.c ../hdrs/pkgstrct.h
 progerr.o: progerr.c pkglocale.h pkgerr.h
 putcfile.o: putcfile.c ../hdrs/pkgstrct.h pkglib.h ../hdrs/pkgdev.h \
@@ -77,9 +76,6 @@ rrmdir.o: rrmdir.c pkglocale.h pkglib.h ../hdrs/pkgdev.h \
   ../hdrs/pkgstrct.h pkgerr.h keystore.h cfext.h
 runcmd.o: runcmd.c ./pkglib.h ../hdrs/pkgdev.h ../hdrs/pkgstrct.h \
   ./pkgerr.h ./keystore.h ./cfext.h pkglocale.h pkglibmsgs.h ../hdrs/libadm.h
-security.o: security.c ../hdrs/pkgstrct.h ../hdrs/pkginfo.h pkgerr.h \
-  pkglib.h ../hdrs/pkgdev.h keystore.h cfext.h pkglibmsgs.h pkglocale.h \
-  p12lib.h
 srchcfile.o: srchcfile.c ./pkglib.h ../hdrs/pkgdev.h ../hdrs/pkgstrct.h \
   ./pkgerr.h ./keystore.h ./cfext.h pkglocale.h pkglibmsgs.h
 tputcfent.o: tputcfent.c ../hdrs/pkgstrct.h pkglocale.h

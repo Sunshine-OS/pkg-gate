@@ -42,14 +42,14 @@ main.o: main.c ../../hdrs/pkgdev.h ../../hdrs/pkginfo.h \
   ../../hdrs/pkglocs.h ../../hdrs/pkgtrans.h \
   ../../libspmizones/spmizones_api.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
-  ../../libpkg/cfext.h ../../libpkg/pkgerr.h ../../libpkg/pkgweb.h \
+  ../../libpkg/cfext.h ../../libpkg/pkgerr.h  \
   ../../hdrs/install.h ../../hdrs/libinst.h ../../libpkg/cfext.h \
   ../../hdrs/install.h ../../hdrs/libadm.h ../ \
   ../../hdrs/sys/dklabel.h ../../hdrs/valtools.h ../../hdrs/messages.h \
   quit.h
 quit.o: quit.c ../../hdrs/pkgdev.h ../../libpkg/pkglib.h \
   ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
-  ../../libpkg/cfext.h ../../libpkg/pkgweb.h ../../hdrs/libadm.h \
+  ../../libpkg/cfext.h ../../hdrs/libadm.h \
   ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h ../../hdrs/messages.h quit.h \

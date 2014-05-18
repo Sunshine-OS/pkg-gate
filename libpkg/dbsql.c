@@ -56,6 +56,8 @@
 #include "pkglibmsgs.h"
 #include "libadm.h"
 
+#define	ERR_MEM "unable to allocate memory."
+
 /* Entry is ready to installf -f */
 #define	INST_RDY	'+'
 
@@ -128,9 +130,6 @@ extern struct cfent **extlist;
 
 /* Defined in libadm:pkgparam.c */
 extern char *get_install_root(void);
-
-/* Defined in libpkg:webpkg.c */
-extern void echo_out(int, char *, ...);
 
 /* private functions */
 static int construct_SQL(struct cfextra **, struct dstr *, char *);
