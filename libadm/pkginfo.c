@@ -299,7 +299,7 @@ fpkginst(char *pkg, ...)
 	static char pkginst[PKGSIZ+1];
 	static DIR *pdirfp;
 	struct dirent *dp;
-	char	*pt, *ckarch, *ckvers;
+	char	*ckarch, *ckvers;
 	va_list	ap;
 
 	va_start(ap, pkg);

@@ -768,21 +768,6 @@ pkgWunlock(void) {
 }
 
 /*
- * This function verifies that the contents file is in place.
- * returns 1 - if it exists
- * returns 0 - if it does not exist
- */
-int
-iscfile(void)
-{
-	char	contents[PATH_MAX];
-
-	(void) snprintf(contents, PATH_MAX, "%s/contents", get_PKGADM());
-
-	return (access(contents, F_OK) == 0 ? 1 : 0);
-}
-
-/*
  * This function verifies that the contents file is in place. If it is - no
  * change. If it isn't - this creates it.
  * Returns:	== 0 : failure

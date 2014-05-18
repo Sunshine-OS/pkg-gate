@@ -83,7 +83,6 @@ extern int	_getvol(char *device, char *label, int options, char *prompt,
 			char *norewind);
 
 /* dstream.c */
-extern int	ds_ginit(char *device);
 extern int	ds_close(int pkgendflg);
 
 #define	CPIOPROC	BINDIR "/cpio"
@@ -165,7 +164,7 @@ static char *pinput, *nextpinput;
 int
 pkghead(char *device)
 {
-	char	*pt;
+	char *pt;
 	int	n;
 
 	cleanup();
@@ -975,13 +974,6 @@ wdsheader(struct dm_buf *hdr, char *src, char *device, char **pkg, PKCS7 *sig)
 
 	fcntl(ds_fd, F_SETFL, O_LARGEFILE);
 
-	if (ds_ginit(device) < 0) {
-		progerr(pkg_gt(ERR_TRANSFER));
-		logerr(pkg_gt(MSG_OPEN), device, errno);
-		(void) ds_close(0);
-		return (1);
-	}
-
 	/*
 	 * The loop below assures compatibility with tapes that don't
 	 * have a block size (e.g.: Exabyte) by forcing EOR at the end
@@ -1505,13 +1497,6 @@ pkgxfer(char *srcinst, int options)
 				    errno);
 				return (1);
 			}
-			if (ds_ginit(dstdev.cdevice) < 0) {
-				progerr(pkg_gt(ERR_TRANSFER));
-				logerr(pkg_gt(MSG_OPEN), dstdev.cdevice,
-				    errno);
-				(void) ds_close(0);
-				return (1);
-			}
 
 			(void) sscanf(volnos, "%d %[ 0-9]", &index, tmpvol);
 			(void) strcpy(volnos, tmpvol);
@@ -1661,13 +1646,6 @@ pkgxfer(char *srcinst, int options)
 					progerr(pkg_gt(ERR_TRANSFER));
 					logerr(pkg_gt(MSG_OPEN),
 					    dstdev.cdevice, errno);
-					return (1);
-				}
-				if (ds_ginit(dstdev.cdevice) < 0) {
-					progerr(pkg_gt(ERR_TRANSFER));
-					logerr(pkg_gt(MSG_OPEN),
-					    dstdev.cdevice, errno);
-					(void) ds_close(0);
 					return (1);
 				}
 

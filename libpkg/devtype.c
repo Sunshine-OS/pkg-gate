@@ -47,7 +47,6 @@
 int
 devtype(char *alias, struct pkgdev *devp)
 {
-	char *name;
 	devp->mntflg = 0;
 	devp->name = alias;
 	devp->dirname = devp->pathname = devp->mount = NULL;

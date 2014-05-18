@@ -86,7 +86,6 @@ int	ds_fd = -1;
 int	ds_curpartcnt = -1;
 
 int	ds_next(char *device, char *instdir);
-int	ds_ginit(char *device);
 int	ds_close(int pkgendflg);
 
 static FILE	*ds_pp;
@@ -98,7 +97,7 @@ static char	ds_volnos[128]; 	/* parts/volume info */
 static char	*ds_device;
 static int	ds_volpart;	/* number of parts read in current volume, */
 						/* including skipped parts */
-static int	ds_bufsize;
+static int	ds_bufsize = BLK_SIZE;
 static int	ds_skippart; 	/* number of parts skipped in current volume */
 
 static int	ds_getnextvol(char *device);
@@ -191,12 +190,6 @@ ds_readbuf(char *device)
 		memcpy(ds_header, buf, BLK_SIZE);
 		ds_headsize = BLK_SIZE;
 
-		if (ds_ginit(device) < 0) {
-			progerr(pkg_gt(ERR_UNPACK));
-			logerr(pkg_gt(MSG_OPEN), device, errno);
-			(void) ds_close(0);
-			return (0);
-		}
 		return (1);
 	} else if (ds_fd >= 0) {
 		(void) close(ds_fd);
@@ -307,14 +300,6 @@ ds_init(char *device, char **pkg, char *norewind)
 			return (-1);
 		}
 
-		/* initialize the device */
-		if (ds_ginit(device) < 0) {
-			(void) ds_close(0);
-			progerr(pkg_gt(ERR_UNPACK));
-			logerr(pkg_gt(MSG_OPEN), device, errno);
-			return (-1);
-		}
-
 		/* read a logical block from the source device */
 		if (read(ds_fd, ds_header, BLK_SIZE) != BLK_SIZE) {
 			rpterr();
@@ -353,14 +338,6 @@ ds_init(char *device, char **pkg, char *norewind)
 				progerr(pkg_gt(ERR_UNPACK));
 				logerr(pkg_gt(MSG_OPEN), device, errno);
 				(void) free(ds_header);
-				return (-1);
-			}
-
-			/* initialize the device */
-			if (ds_ginit(device) < 0) {
-				(void) ds_close(0);
-				progerr(pkg_gt(ERR_UNPACK));
-				logerr(pkg_gt(MSG_OPEN), device, errno);
 				return (-1);
 			}
 
@@ -615,10 +592,6 @@ ds_getnextvol(char *device)
 	    ds_volno, ds_volcnt);
 	if ((ds_fd = open(device, O_RDONLY | O_LARGEFILE)) < 0)
 		return (-1);
-	if (ds_ginit(device) < 0) {
-		(void) ds_close(0);
-		return (-1);
-	}
 	ds_volpart = 0;
 	return (0);
 }
@@ -779,27 +752,6 @@ BIO_ds_dump_header(PKG_ERR *err, BIO *bio)
 #else	/* !USE_KEYSTORE */
 	return (1);
 #endif	/* !USE_KEYSTORE */
-}
-
-/*
- * ds_ginit: Determine the device being accessed, set the buffer size,
- * and perform any device specific initialization.  For the 3B2,
- * a device with major number of 17 (0x11) is an internal hard disk,
- * unless the minor number is 128 (0x80) in which case it is an internal
- * floppy disk.  Otherwise, get the system configuration
- * table and check it by comparing slot numbers to major numbers.
- * For the special case of the 3B2 CTC several unusual things must be done.
- * To enable
- * streaming mode on the CTC, the file descriptor must be closed, re-opened
- * (with O_RDWR and O_CTSPECIAL flags set), the STREAMON ioctl(2) command
- * issued, and the file descriptor re-re-opened either read-only or write_only.
- */
-
-int
-ds_ginit(char *device)
-{
-	ds_bufsize = BLK_SIZE;
-	return (ds_bufsize);
 }
 
 int

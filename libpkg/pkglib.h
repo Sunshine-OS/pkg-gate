@@ -537,7 +537,6 @@ extern int	ds_close();
 extern int	ds_findpkg();
 extern int	ds_getinfo();
 extern int	ds_getpkg();
-extern int	ds_ginit();
 extern boolean_t	ds_fd_open();
 extern int	ds_init();
 extern int	ds_next();

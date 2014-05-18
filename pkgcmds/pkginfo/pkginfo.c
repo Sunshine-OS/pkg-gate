@@ -624,7 +624,6 @@ static void
 look_for_installed(void)
 {
 	struct dirent *drp;
-	struct stat	status;
 	DIR	*dirfp;
 	char	path[PATH_MAX];
 

@@ -61,8 +61,6 @@ extern char	*pkgfile;
 #define	ERR_USAGE	"usage:\n" \
 			"\t%s [-v] [-d device] pkginst [param [param ...]]\n" \
 			"\t%s [-v] -f file [param [param ...]]\n"
-#define	HASHSIZE	151
-#define	BSZ		4
 
 
 static char	*device = NULL;

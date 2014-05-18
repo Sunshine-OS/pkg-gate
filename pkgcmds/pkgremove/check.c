@@ -181,7 +181,6 @@ rckdepend(void)
 {
 	int	n;
 	char	ans[MAX_INPUT];
-	char	**id, **name;
 
 	if (ADM(rdepend, "nocheck")) {
 		return (0);

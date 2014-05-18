@@ -181,12 +181,6 @@ extern char	*getfullrawname __P((char *cp));
 extern int	getinput __P((char *s));
 
 /*
- * memory.c
- */
-extern long	sysmem __P((void));
-extern long	asysmem __P((void));
-
-/*
  * pkginfo.c
  */
 extern int	pkginfo __P((struct pkginfo *info, char *pkginst, ...));

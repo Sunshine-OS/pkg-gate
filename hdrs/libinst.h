@@ -298,7 +298,6 @@ extern int	swapcfile __P((VFP_T **a_mapvfp, VFP_T **a_tmpvfp,
 extern int	set_cfdir __P((char *cfdir));
 extern int	socfile __P((VFP_T **vfp));
 extern int	relslock __P((void));
-extern int	iscfile __P((void));
 extern int	vcfile __P((void));
 
 extern long	nblk __P((long size, unsigned long bsize, unsigned long frsize));
