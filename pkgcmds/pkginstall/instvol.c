@@ -181,10 +181,6 @@ instvol(struct cfextra **extlist, char *srcinst, int part,
 	 * output.
 	 */
 
-	if (part == 1) {
-		pkgvolume(&pkgdev, srcinst, part, nparts);
-	}
-
 	tcount = 0;
 	nc = cl_getn();
 
@@ -319,8 +315,6 @@ instvol(struct cfextra **extlist, char *srcinst, int part,
 			if (is_fs_writeable(ext->cf_ent.path,
 				&(ext->fsys_value)))
 				count++;
-
-			pkgvolume(&pkgdev, srcinst, part, nparts);
 
 			/*
 			 * If source verification is OK for this class, make
@@ -1216,8 +1210,7 @@ domerg(struct cfextra **extlist, int part, int nparts,
 					if (*srcp[0] == '~') {
 						/* translate source pathname */
 						*srcp = srcpath(instdir,
-							extlist[i]->map_path,
-							part, nparts);
+							extlist[i]->map_path);
 					} else {
 						*srcp = extlist[i]->map_path;
 					}
@@ -1225,8 +1218,7 @@ domerg(struct cfextra **extlist, int part, int nparts,
 					if (*srcp[0] == '~') {
 						/* translate source pathname */
 						*srcp = srcpath(instdir,
-						    &(ept->ainfo.local[1]),
-						    part, nparts);
+						    &(ept->ainfo.local[1]));
 					}
 				}
 

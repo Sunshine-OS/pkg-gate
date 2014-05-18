@@ -65,10 +65,6 @@
 			(strcmp(cm.c_mag, CMS_CHR) == 0) && \
 			(strcmp(cm.c_mag, CMS_CRC) == 0))
 
-/* location of distributed file system types database */
-
-#define	REMOTE_FS_DBFILE	"/etc/dfs/fstypes"
-
 /* character array used to hold dfs types database contents */
 
 static long		numRemoteFstypes = -1;
@@ -277,7 +273,9 @@ isFstypeRemote(char *a_fstype)
 
 	/* initialize the list if it is not yet initialized */
 
-	_InitRemoteFstypes();
+	if (numRemoteFstypes == -1) {
+		_InitRemoteFstypes();
+	}
 
 	/* scan the list looking for the specified type */
 
@@ -310,67 +308,13 @@ isFstypeRemote(char *a_fstype)
 static void
 _InitRemoteFstypes(void)
 {
-	FILE    *fp;
-	char    line_buf[LINE_MAX];
+	/* start with zero */
+	numRemoteFstypes = 0;
 
-	/* return if already initialized */
-
-	if (numRemoteFstypes > 0) {
-		return;
-	}
-
-	/* if list is uninitialized, start with zero */
-
-	if (numRemoteFstypes == -1) {
-		numRemoteFstypes = 0;
-	}
-
-	/* open the remote file system type database file */
-
-	if ((fp = fopen(REMOTE_FS_DBFILE, "r")) == NULL) {
-		/* no remote type database: use predefined remote types */
-		remoteFstypes = (char **)realloc(remoteFstypes,
-					sizeof (char *) * (numRemoteFstypes+3));
-		remoteFstypes[numRemoteFstypes++] = "nfs";	/* +1 */
-		remoteFstypes[numRemoteFstypes++] = "autofs";	/* +2 */
-		remoteFstypes[numRemoteFstypes++] = "cachefs";	/* +3 */
-		return;
-	}
-
-	/*
-	 * Read the remote file system type database; from fstypes(4):
-	 *
-	 * fstypes resides in directory /etc/dfs and lists distributed file
-	 * system utilities packages installed on the system. For each installed
-	 * distributed file system type, there is a line that begins with the
-	 * file system type name (for example, ``nfs''), followed by white space
-	 * and descriptive text.
-	 *
-	 * Lines will look at lot like this:
-	 *
-	 *	nfs NFS Utilities
-	 *	autofs AUTOFS Utilities
-	 *	cachefs CACHEFS Utilities
-	 */
-
-	while (fgets(line_buf, sizeof (line_buf), fp) != NULL) {
-		char		buf[LINE_MAX];
-		static char	format[128] = {'\0'};
-
-		if (format[0] == '\0') {
-			/* create bounded format: %ns */
-			(void) snprintf(format, sizeof (format),
-				"%%%ds", sizeof (buf)-1);
-		}
-
-		(void) sscanf(line_buf, format, buf);
-
-		remoteFstypes = realloc(remoteFstypes,
-					sizeof (char *) * (numRemoteFstypes+1));
-		remoteFstypes[numRemoteFstypes++] = strdup(buf);
-	}
-
-	/* close database file and return */
-
-	(void) fclose(fp);
+	/* shortcut - don't bother with fstypes(4) */
+	remoteFstypes = (char **)realloc(remoteFstypes,
+				sizeof (char *) * (numRemoteFstypes+3));
+	remoteFstypes[numRemoteFstypes++] = "nfs";	/* +1 */
+	remoteFstypes[numRemoteFstypes++] = "autofs";	/* +2 */
+	remoteFstypes[numRemoteFstypes++] = "cachefs";	/* +3 */
 }

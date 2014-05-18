@@ -242,11 +242,6 @@ quit(int retcode)
 		ptext(stderr, gettext(MSG_REBOOT));
 	}
 
-	if (pkgdev.mount) {
-		(void) chdir("/");
-		(void) pkgumount(&pkgdev);
-	}
-
 	/* if set remove zone temporary directory */
 
 	if (zoneTempDir != (char *)NULL) {

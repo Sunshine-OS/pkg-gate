@@ -4,10 +4,10 @@ INC = -I. -I../hdrs -I../libgendb
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) $(PATHS) $(WARN) $<
 
 
-OBJ = canonize.o ckparam.o ckvolseq.o cvtpath.o dbsql.o devtype.o \
+OBJ = canonize.o ckparam.o cvtpath.o dbsql.o devtype.o \
 	dstream.o fmkdir.o gpkglist.o gpkgmap.o isdir.o keystore.o \
 	logerr.o mappath.o ncgrpw.o nhash.o pkgerr.o \
-	pkgexecl.o pkgexecv.o pkgmount.o pkgstr.o pkgtrans.o pkgweb.o \
+	pkgexecl.o pkgexecv.o pkgstr.o pkgtrans.o pkgweb.o \
 	ppkgmap.o progerr.o putcfile.o rrmdir.o runcmd.o \
 	security.o srchcfile.o tputcfent.o verify.o vfpops.o
 
@@ -26,8 +26,6 @@ mrproper: clean
 
 canonize.o: canonize.c
 ckparam.o: ckparam.c ./pkglib.h ../hdrs/pkgdev.h ../hdrs/pkgstrct.h \
-  ./pkgerr.h ./keystore.h ./cfext.h ./pkglibmsgs.h pkglocale.h
-ckvolseq.o: ckvolseq.c ../hdrs/pkgstrct.h ./pkglib.h ../hdrs/pkgdev.h \
   ./pkgerr.h ./keystore.h ./cfext.h ./pkglibmsgs.h pkglocale.h
 cvtpath.o: cvtpath.c
 dbsql.o: dbsql.c ./pkglib.h ../hdrs/pkgdev.h ../hdrs/pkgstrct.h \
@@ -59,9 +57,6 @@ pkgexecl.o: pkgexecl.c pkglocale.h pkglibmsgs.h ./pkglib.h \
   ../hdrs/pkgdev.h ../hdrs/pkgstrct.h ./pkgerr.h ./keystore.h ./cfext.h
 pkgexecv.o: pkgexecv.c ./pkglib.h ../hdrs/pkgdev.h ../hdrs/pkgstrct.h \
   ./pkgerr.h ./keystore.h ./cfext.h ./pkglibmsgs.h pkglocale.h ../hdrs/libadm.h
-pkgmount.o: pkgmount.c ../hdrs/pkgdev.h ../hdrs/pkginfo.h \
-  ./pkglib.h ../hdrs/pkgstrct.h ./pkgerr.h ./keystore.h \
-  ./cfext.h ./pkglibmsgs.h pkglocale.h
 pkgstr.o: pkgstr.c ./pkglib.h ../hdrs/pkgdev.h ../hdrs/pkgstrct.h \
   ./pkgerr.h ./keystore.h ./cfext.h pkglocale.h
 pkgtrans.o: pkgtrans.c ../hdrs/pkginfo.h ../hdrs/pkgstrct.h \

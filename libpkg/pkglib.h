@@ -386,7 +386,6 @@ extern char	*get_prog_name(void);
 extern char 	*set_prog_name(char *name);
 extern int	averify(int fix, char *ftype, char *path, struct ainfo *ainfo);
 extern int	ckparam(char *param, char *value);
-extern int	ckvolseq(char *dir, int part, int nparts);
 extern int	cverify(int fix, char *ftype, char *path, struct cinfo *cinfo,
 			int allow_checksum);
 extern unsigned long	compute_checksum(int *r_cksumerr, char *a_path);
@@ -401,15 +400,13 @@ extern int	ds_totread;	/* total number of parts read */
 extern int	ds_close(int pkgendflg);
 extern int	ds_findpkg(char *device, char *pkg);
 extern int	ds_getinfo(char *string);
-extern int	ds_getpkg(char *device, int n, char *dstdir);
+extern int	ds_getpkg(int n);
 extern int	ds_ginit(char *device);
 extern boolean_t	ds_fd_open(void);
 extern int	ds_init(char *device, char **pkg, char *norewind);
 extern int	BIO_ds_dump_header(PKG_ERR *, BIO *);
 extern int	BIO_ds_dump(PKG_ERR *, char *, BIO *);
 extern int	BIO_dump_cmd(char *cmd, BIO *bio);
-extern int	ds_next(char *, char *);
-extern int	ds_readbuf(char *device);
 extern int	epclose(FILE *pp);
 extern int	esystem(char *cmd, int ifd, int ofd);
 extern int	e_ExecCmdArray(int *r_status, char **r_results,
@@ -430,11 +427,8 @@ extern int	pkgexecl(char *filein, char *fileout, char *uname, char *gname,
 extern int	pkgexecv(char *filein, char *fileout, char *uname, char *gname,
 			char *arg[]);
 extern int	pkghead(char *device);
-extern int	pkgmount(struct pkgdev *devp, char *pkg, int part, int nparts,
-			int getvolflg);
 extern int	pkgtrans(char *device1, char *device2, char **pkg,
 			int options, keystore_handle_t, char *);
-extern int	pkgumount(struct pkgdev *devp);
 extern int	ppkgmap(struct cfent *ept, FILE *fp);
 extern int	putcfile(struct cfent *ept, FILE *fp);
 extern int	putcvfpfile(struct cfent *ept, VFP_T *vfp);
@@ -464,7 +458,6 @@ extern void	checksum_off(void);
 extern void	checksum_on(void);
 extern void	cvtpath(char *path, char *copy);
 extern void	ds_order(char *list[]);
-extern void	ds_putinfo(char *buf);
 extern void	ds_skiptoend(char *device);
 extern void	ecleanup(void);
 /*PRINTFLIKE1*/
@@ -524,7 +517,6 @@ extern char	*get_prog_name();
 extern char 	*set_prog_name();
 extern int	averify();
 extern int	ckparam();
-extern int	ckvolseq();
 extern int	cverify();
 extern unsigned long	compute_checksum();
 extern int	fverify();
@@ -535,12 +527,9 @@ extern void	setErrstr();
 extern int	devtype();
 extern int	ds_close();
 extern int	ds_findpkg();
-extern int	ds_getinfo();
 extern int	ds_getpkg();
 extern boolean_t	ds_fd_open();
 extern int	ds_init();
-extern int	ds_next();
-extern int	ds_readbuf();
 extern int	epclose();
 extern int	esystem();
 extern int	e_ExecCmdArray();
@@ -555,9 +544,7 @@ extern int	isfile();
 extern int	pkgexecl();
 extern int	pkgexecv();
 extern int	pkghead();
-extern int	pkgmount();
 extern int	pkgtrans();
-extern int	pkgumount();
 extern int	ppkgmap();
 extern int	putcfile();
 extern int	putcvfpfile();
@@ -574,7 +561,6 @@ extern void	checksum_off();
 extern void	checksum_on();
 extern void	cvtpath();
 extern void	ds_order();
-extern void	ds_putinfo();
 extern void	ds_skiptoend();
 extern void	ecleanup();
 extern void	logerr();

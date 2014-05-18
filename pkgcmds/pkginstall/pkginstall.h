@@ -64,8 +64,6 @@ extern "C" {
 
 extern int	cppath __P((int ctrl, char *f1, char *f2, mode_t mode));
 extern void	backup __P((char *path, int mode));
-extern void	pkgvolume __P((struct pkgdev *devp, char *pkg, int part,
-		    int nparts));
 extern void	quit __P((int exitval));
 extern void	ckreturn __P((int retcode, char *msg));
 extern int	sortmap __P((struct cfextra ***extlist, VFP_T *pkgmapVfp,

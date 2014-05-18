@@ -700,17 +700,6 @@ main(int argc, char **argv)
 		boolean_t	b;
 		char		**pkglist;	/* points to array of pkgs */
 
-		/*
-		 * mount the spool device if required
-		 */
-
-		if (pkgdev.mount) {
-			if (n = pkgmount(&pkgdev, NULL, 0, 0, 1)) {
-				quit(n);
-				/* NOTREACHED */
-			}
-		}
-
 		if (chdir(pkgdev.dirname)) {
 			progerr(ERR_CHDIR, pkgdev.dirname);
 			quit(1);
@@ -769,20 +758,6 @@ main(int argc, char **argv)
 
 		b = remove_packages(pkglist, nodelete, longestPkg, repeat,
 			altBinDir, pkgdev.dirname, spoolDir, noZones);
-
-		/*
-		 * unmount the spool directory if necessary
-		 */
-
-		if (pkgdev.mount) {
-			(void) chdir("/");
-			if (pkgumount(&pkgdev)) {
-				progerr(ERR_PKGUNMOUNT, pkgdev.bdevice);
-				quit(99);
-				/* NOTREACHED */
-
-			}
-		}
 
 		/*
 		 * continue with next sequence of packages if continue set

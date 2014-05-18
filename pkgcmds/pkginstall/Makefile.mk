@@ -10,7 +10,7 @@ PKGLIBS = -L../../libinst -linst -L../../libpkg -lpkgu -L../../libgendb -lgendb 
 
 BIN = pkginstall
 OBJ = backup.o check.o cppath.o dockspace.o getinst.o instvol.o main.o \
-	merginfo.o pkgenv.o pkgvolume.o quit.o reqexec.o \
+	merginfo.o pkgenv.o quit.o reqexec.o \
 	sortmap.o ../../version/version.o
 
 all: $(BIN)
@@ -92,11 +92,6 @@ pkgenv.o: pkgenv.c ../../hdrs/pkgstrct.h ../../libpkg/pkglib.h \
   ../ ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h \
   ../../hdrs/valtools.h ../../hdrs/install.h ../../hdrs/libinst.h \
   ../../libpkg/cfext.h
-pkgvolume.o: pkgvolume.c ../../hdrs/pkgdev.h ../../libpkg/pkglib.h \
-  ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h ../../libpkg/keystore.h \
-  ../../libpkg/cfext.h ../../hdrs/libadm.h ../ \
-  ../../hdrs/sys/dklabel.h ../../hdrs/pkginfo.h ../../hdrs/valtools.h \
-  ../../hdrs/install.h ../../hdrs/libinst.h ../../libpkg/cfext.h
 quit.o: quit.c ../../hdrs/pkgdev.h ../../hdrs/pkglocs.h \
   ../../libpkg/pkglib.h ../../hdrs/pkgstrct.h ../../libpkg/pkgerr.h \
   ../../libpkg/keystore.h ../../libpkg/cfext.h ../../hdrs/install.h \

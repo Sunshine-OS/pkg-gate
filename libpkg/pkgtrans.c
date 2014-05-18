@@ -78,9 +78,6 @@ extern char	*pkgdir; 		/* pkgparam.c */
 /* libadm.a */
 extern char	*fpkginst(char *pkg, ...);
 extern int	fpkginfo(struct pkginfo *info, char *pkginst);
-extern int	getvol(char *device, char *label, int options, char *prompt);
-extern int	_getvol(char *device, char *label, int options, char *prompt,
-			char *norewind);
 
 /* dstream.c */
 extern int	ds_close(int pkgendflg);
@@ -109,7 +106,6 @@ static char	*tmpsymdir = NULL;
 static char	dstinst[NON_ABI_NAMELNGTH];
 static char 	*ids_name, *ods_name;
 static int	ds_volcnt;
-static int	ds_volno;
 static int	compressedsize, has_comp_size;
 
 static void	(*sigintHandler)(int);
@@ -124,7 +120,7 @@ static int	ckoverwrite(char *dir, char *inst, int options);
 static int	pkgxfer(char *srcinst, int options);
 static int	wdsheader(struct dm_buf *, char *src, char *device,
     char **pkg, PKCS7 *);
-static struct dm_buf	*genheader(char *, char *, char **);
+static struct dm_buf	*genheader(char *, char **);
 
 #ifdef USE_KEYSTORE
 static int	dump_hdr_and_pkgs(BIO *, struct dm_buf *, char **);
@@ -354,30 +350,13 @@ _pkgtrans(char *device1, char *device2, char **pkg, int options,
 
 	/* check for datastream */
 	ids_name = NULL;
-	if (srcdev.bdevice) {
-		if (ds_readbuf(srcdev.cdevice))
-			ids_name = srcdev.cdevice;
-	}
-
-	if (srcdev.cdevice && !srcdev.bdevice)
-		ids_name = srcdev.cdevice;
-	else if (srcdev.pathname) {
+	if (srcdev.pathname) {
 		ids_name = srcdev.pathname;
 		if (access(ids_name, 0) == -1) {
 			progerr(ERR_TRANSFER);
 			logerr(pkg_gt(MSG_GETVOL));
 			return (1);
 		}
-	}
-
-	if (!ids_name && device2 == (char *)0) {
-		if (n = pkgmount(&srcdev, NULL, 1, 0, 0)) {
-			cleanup();
-			return (n);
-		}
-		if (srcdev.mount && *srcdev.mount)
-			pkgdir = strdup(srcdev.mount);
-		return (0);
 	}
 
 	if (ids_name && device2 == (char *)0) {
@@ -412,7 +391,7 @@ _pkgtrans(char *device1, char *device2, char **pkg, int options,
 	}
 
 	ods_name = NULL;
-	if (dstdev.cdevice && !dstdev.bdevice || dstdev.pathname)
+	if (dstdev.cdevice || dstdev.pathname)
 		options |= PT_ODTSTREAM;
 
 	if (options & PT_ODTSTREAM) {
@@ -460,14 +439,6 @@ _pkgtrans(char *device1, char *device2, char **pkg, int options,
 
 	if (ids_name) {
 		char	template[] = "/var/tmp/ptXXXXXX";
-		if (srcdev.cdevice && !srcdev.bdevice) {
-			cleanup();
-			if (n == 3)
-				return (3);
-			progerr(pkg_gt(ERR_TRANSFER));
-			logerr(pkg_gt(MSG_GETVOL));
-			return (1);
-		}
 		if (close(mkstemp(template)) < 0)
 			srcdev.dirname = NULL;
 		else {
@@ -486,11 +457,7 @@ _pkgtrans(char *device1, char *device2, char **pkg, int options,
 			cleanup();
 			return (1);
 		}
-	} else if (srcdev.mount) {
-		if (n = pkgmount(&srcdev, NULL, 1, 0, 0)) {
-			cleanup();
-			return (n);
-		}
+	
 	}
 
 	src = srcdev.dirname;
@@ -530,15 +497,7 @@ _pkgtrans(char *device1, char *device2, char **pkg, int options,
 	if (options & PT_ODTSTREAM) {
 		char line[128];
 
-		if (!dstdev.pathname) {
-			cleanup();
-			if (n == 3)
-				return (3);
-			progerr(pkg_gt(ERR_TRANSFER));
-			logerr(pkg_gt(MSG_GETVOL));
-			return (1);
-		}
-		if ((hdr = genheader(src, ods_name, pkg)) == NULL) {
+		if ((hdr = genheader(src, pkg)) == NULL) {
 			cleanup();
 			return (1);
 		}
@@ -599,7 +558,6 @@ _pkgtrans(char *device1, char *device2, char **pkg, int options,
 		}
 #endif	/* USE_KEYSTORE */
 
-		ds_volno = 1; /* number of volumes in datastream */
 		pinput = hdrbuf.text_buffer;
 		/* skip past first line in header */
 		(void) mgets(line, 128);
@@ -617,12 +575,6 @@ _pkgtrans(char *device1, char *device2, char **pkg, int options,
 			return (1);
 		}
 
-		if (!(options & PT_ODTSTREAM) && dstdev.mount) {
-			if (n = pkgmount(&dstdev, NULL, 0, 0, 1)) {
-				cleanup();
-				return (n);
-			}
-		}
 		if (errflg = pkgxfer(pkg[i], options)) {
 			pkg[i] = NULL;
 			if ((options & PT_ODTSTREAM) || (errflg != 2))
@@ -783,7 +735,7 @@ cat_and_count(struct dm_buf *buf_ctrl, char *append)
 }
 
 static struct dm_buf *
-genheader(char *src, char *device, char **pkg)
+genheader(char *src, char **pkg)
 {
 
 	FILE	*fp = NULL;
@@ -883,15 +835,6 @@ genheader(char *src, char *device, char **pkg)
 		totsize += nparts * maxpsize;
 		if (dstdev.capacity && dstdev.capacity < totsize) {
 			int lastpartcnt = 0;
-#if 0
-			if (i != 0) {
-				progerr(pkg_gt(ERR_TRANSFER));
-				logerr(pkg_gt(MSG_NOSPACE));
-				(void) fclose(fp);
-				ecleanup();
-				return (NULL);
-			}
-#endif	/* 0 */
 
 			if (totsize)
 				totsize -= nparts * maxpsize;
@@ -1376,75 +1319,11 @@ pkgxfer(char *srcinst, int options)
 			return (1);
 		}
 		for (part = 1; part <= nparts; /* void */) {
-			if (ds_getpkg(srcdev.cdevice, part, dstdir)) {
+			if (ds_getpkg(part)) {
 				progerr(pkg_gt(ERR_TRANSFER));
 				return (1);
 			}
 			part++;
-			if (dstdev.mount) {
-				(void) chdir("/");
-				if (pkgumount(&dstdev))
-					return (1);
-				if (part <= nparts) {
-					if (n = pkgmount(&dstdev, NULL, part+1,
-					    nparts, 1))
-						return (n);
-					if (ckoverwrite(dst, dstinst, options))
-						return (1);
-					if (isdir(dstdir) &&
-					    mkdir(dstdir, 0755)) {
-						progerr(
-						    pkg_gt(ERR_TRANSFER));
-						logerr(pkg_gt(MSG_MKDIR),
-						    dstdir);
-						return (1);
-					}
-					/*
-					 * since volume is removable, each part
-					 * must contain a duplicate of the
-					 * pkginfo file to properly identify the
-					 * volume
-					 */
-					if (chdir(srcdir)) {
-						progerr(
-						    pkg_gt(ERR_TRANSFER));
-						logerr(pkg_gt(MSG_CHDIR),
-						    srcdir);
-						return (1);
-					}
-					if ((pp = epopen(cmd, "w")) == NULL) {
-						rpterr();
-						progerr(
-						    pkg_gt(ERR_TRANSFER));
-						logerr(pkg_gt(MSG_POPEN),
-						    cmd, errno);
-						return (1);
-					}
-					(void) fprintf(pp, "pkginfo");
-
-					sighold(SIGINT);
-					sighold(SIGHUP);
-					r = epclose(pp);
-					sigrelse(SIGINT);
-					sigrelse(SIGHUP);
-
-					if (r != 0) {
-						rpterr();
-						progerr(
-						    pkg_gt(ERR_TRANSFER));
-						logerr(pkg_gt(MSG_PCLOSE),
-						    cmd, errno);
-						return (1);
-					}
-					if (chdir(dstdir)) {
-						progerr(
-						    pkg_gt(ERR_TRANSFER));
-						logerr(pkg_gt(MSG_CHDIR),
-						    dstdir);
-						return (1);
-					}
-				}
-			}
 		}
 		return (0);
 	}
@@ -1461,14 +1340,6 @@ pkgxfer(char *srcinst, int options)
 	else
 		(void) fclose(fp);
 
-	if (srcdev.mount) {
-		if (ckvolseq(srcdir, 1, nparts)) {
-			progerr(pkg_gt(ERR_TRANSFER));
-			logerr(pkg_gt(MSG_SEQUENCE));
-			return (1);
-		}
-	}
-
 	/* write each part of this package */
 	if (options & PT_ODTSTREAM) {
 		char line[128];
@@ -1481,57 +1352,16 @@ pkgxfer(char *srcinst, int options)
 		}
 	}
 
+	/*
+	 * Only do single-part archives
+	 */
+	nparts = 1;
 	for (part = 1; part <= nparts; /* void */) {
-		if (curpartcnt == 0 && (options & PT_ODTSTREAM)) {
-			char prompt[128];
-			int index;
-			ds_volno++;
-			(void) ds_close(0);
-			(void) sprintf(prompt,
-			    pkg_gt("Insert %%v %d of %d into %%p"),
-			    ds_volno, ds_volcnt);
-			if ((ds_fd = open(dstdev.cdevice, O_WRONLY
-			    | O_LARGEFILE)) < 0) {
-				progerr(pkg_gt(ERR_TRANSFER));
-				logerr(pkg_gt(MSG_OPEN), dstdev.cdevice,
-				    errno);
-				return (1);
-			}
-
-			(void) sscanf(volnos, "%d %[ 0-9]", &index, tmpvol);
-			(void) strcpy(volnos, tmpvol);
-			curpartcnt += index;
-		}
 
 		if (options & PT_INFO_ONLY)
 			nparts = 0;
 
-		if (part == 1) {
-			(void) sprintf(cmd, "find %s %s", PKGINFO, PKGMAP);
-			if (nparts && (isdir(INSTALL) == 0)) {
-				(void) strcat(cmd, " ");
-				(void) strcat(cmd, INSTALL);
-			}
-		} else
-			(void) sprintf(cmd, "find %s", PKGINFO);
-
-		if (nparts > 1) {
-			(void) sprintf(temp, "%s.%d", RELOC, part);
-			if (iscpio(temp, &iscomp) || isdir(temp) == 0) {
-				(void) strcat(cmd, " ");
-				(void) strcat(cmd, temp);
-			}
-			(void) sprintf(temp, "%s.%d", ROOT, part);
-			if (iscpio(temp, &iscomp) || isdir(temp) == 0) {
-				(void) strcat(cmd, " ");
-				(void) strcat(cmd, temp);
-			}
-			(void) sprintf(temp, "%s.%d", ARCHIVE, part);
-			if (isdir(temp) == 0) {
-				(void) strcat(cmd, " ");
-				(void) strcat(cmd, temp);
-			}
-		} else if (nparts) {
+		if (nparts) {
 			for (i = 0; reloc_names[i] != NULL; i++) {
 				if (iscpio(reloc_names[i], &iscomp) ||
 				    isdir(reloc_names[i]) == 0) {
@@ -1585,77 +1415,6 @@ pkgxfer(char *srcinst, int options)
 		}
 
 		part++;
-		if (srcdev.mount && (nparts > 1)) {
-			/* unmount current source volume */
-			(void) chdir("/");
-			if (pkgumount(&srcdev))
-				return (1);
-			/* loop until volume is mounted successfully */
-			while (part <= nparts) {
-				/* read only */
-				n = pkgmount(&srcdev, NULL, part, nparts, 1);
-				if (n)
-					return (n);
-				if (chdir(srcdir)) {
-					progerr(pkg_gt(ERR_TRANSFER));
-					logerr(pkg_gt(MSG_CORRUPT), srcdir);
-					(void) chdir("/");
-					pkgumount(&srcdev);
-					continue;
-				}
-				if (ckvolseq(srcdir, part, nparts)) {
-					(void) chdir("/");
-					pkgumount(&srcdev);
-					continue;
-				}
-				break;
-			}
-		}
-		if (!(options & PT_ODTSTREAM) && dstdev.mount) {
-			/* unmount current volume */
-			if (pkgumount(&dstdev))
-				return (1);
-			/* loop until next volume is mounted successfully */
-			while (part <= nparts) {
-				/* writable */
-				n = pkgmount(&dstdev, NULL, part, nparts, 1);
-				if (n)
-					return (n);
-				if (ckoverwrite(dst, dstinst, options))
-					continue;
-				if (isdir(dstdir) && mkdir(dstdir, 0755)) {
-					progerr(pkg_gt(ERR_TRANSFER));
-					logerr(pkg_gt(MSG_MKDIR), dstdir);
-					continue;
-				}
-				break;
-			}
-		}
-
-		if ((options & PT_ODTSTREAM) && part <= nparts) {
-			if (curpartcnt >= 0 && part > curpartcnt) {
-				char prompt[128];
-				int index;
-				ds_volno++;
-				if (ds_close(0))
-					return (1);
-				(void) sprintf(prompt,
-				    pkg_gt("Insert %%v %d of %d into %%p"),
-				    ds_volno, ds_volcnt);
-				if ((ds_fd = open(dstdev.cdevice, 1)) < 0) {
-					progerr(pkg_gt(ERR_TRANSFER));
-					logerr(pkg_gt(MSG_OPEN),
-					    dstdev.cdevice, errno);
-					return (1);
-				}
-
-				(void) sscanf(volnos, "%d %[ 0-9]", &index,
-				    tmpvol);
-				(void) strcpy(volnos, tmpvol);
-				curpartcnt += index;
-			}
-		}
-
 	}
 	return (0);
 }
@@ -1677,10 +1436,7 @@ static int
 pkgdump(char *srcinst, BIO *bio)
 {
 	FILE	*fp;
-	char	*src;
-	char	temp[MAXPATHLEN],
-		srcdir[MAXPATHLEN],
-		cmd[CMDSIZE];
+	char	cmd[CMDSIZE];
 	int	i, n, part, nparts, maxpartsize, iscomp;
 
 	/*
@@ -1702,17 +1458,6 @@ pkgdump(char *srcinst, BIO *bio)
 	else
 		(void) fclose(fp);
 
-	/* make sure the first volume is available */
-	if (srcdev.mount) {
-		src = srcdev.dirname;
-		(void) snprintf(srcdir, MAXPATHLEN, "%s/%s", src, srcinst);
-		if (ckvolseq(srcdir, 1, nparts)) {
-			progerr(pkg_gt(ERR_TRANSFER));
-			logerr(pkg_gt(MSG_SEQUENCE));
-			return (1);
-		}
-	}
-
 	/*
 	 * form cpio command that will output the contents of all of
 	 * this package's parts
@@ -1729,24 +1474,7 @@ pkgdump(char *srcinst, BIO *bio)
 		} else
 			(void) snprintf(cmd, CMDSIZE, "find %s", PKGINFO);
 
-		if (nparts > 1) {
-			(void) snprintf(temp, MAXPATHLEN, "%s.%d", RELOC, part);
-			if (iscpio(temp, &iscomp) || isdir(temp) == 0) {
-				(void) strlcat(cmd, " ", CMDSIZE);
-				(void) strlcat(cmd, temp, CMDSIZE);
-			}
-			(void) snprintf(temp, MAXPATHLEN, "%s.%d", ROOT, part);
-			if (iscpio(temp, &iscomp) || isdir(temp) == 0) {
-				(void) strlcat(cmd, " ", CMDSIZE);
-				(void) strlcat(cmd, temp, CMDSIZE);
-			}
-			(void) snprintf(temp, MAXPATHLEN, "%s.%d",
-			    ARCHIVE, part);
-			if (isdir(temp) == 0) {
-				(void) strlcat(cmd, " ", CMDSIZE);
-				(void) strlcat(cmd, temp, CMDSIZE);
-			}
-		} else if (nparts) {
+		if (nparts) {
 			for (i = 0; reloc_names[i] != NULL; i++) {
 				if (iscpio(reloc_names[i], &iscomp) ||
 				    isdir(reloc_names[i]) == 0) {
@@ -1820,10 +1548,6 @@ cleanup(void)
 		tmpsymdir = NULL;
 	}
 
-	if (srcdev.mount && !ids_name)
-		pkgumount(&srcdev);
-	if (dstdev.mount && !ods_name)
-		pkgumount(&dstdev);
 	(void) ds_close(1);
 }
 

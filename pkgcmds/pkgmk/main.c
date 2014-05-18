@@ -87,7 +87,6 @@ extern void	setmapmode(int mode_no);
 #define	MSG_PKGINFO	"## Processing pkginfo file.\n"
 #define	MSG_VOLUMIZE	"## Attempting to volumize %d entries in pkgmap.\n"
 #define	MSG_PACKAGE1	"## Packaging one part.\n"
-#define	MSG_PACKAGEM	"## Packaging %d parts.\n"
 #define	MSG_VALSCRIPTS	"## Validating control scripts.\n"
 
 /* Other problems */
@@ -153,8 +152,7 @@ static int	overwrite,
 		nflag,
 		sflag;
 static void	ckmissing(char *path, char type);
-static void	outvol(struct cfent **eptlist, int eptnum, int part,
-			int nparts);
+static void	outvol(struct cfent **eptlist, int eptnum);
 static void	trap(int n);
 static void	usage(void);
 
@@ -169,7 +167,7 @@ main(int argc, char *argv[])
 	FILE	*fp;
 	VFP_T	*vfp;
 	int	i, c, n, eptnum, found,
-		part, nparts, npkgs, objects;
+		nparts, npkgs, objects;
 	char	buf[MAX_PKG_PARAM_LENGTH];
 	char	temp[MAX_PKG_PARAM_LENGTH];
 	char	param[MAX_PKG_PARAM_LENGTH];
@@ -185,6 +183,7 @@ main(int argc, char *argv[])
 	fsblkcnt_t	frsize = 0;
 	struct cl_attr	**allclass = NULL;
 	struct cl_attr	**order;
+	char inst_path[PATH_MAX];
 
 	/* initialize locale environment */
 
@@ -320,11 +319,6 @@ main(int argc, char *argv[])
 		progerr(gettext(ERR_DSTREAM), device);
 		quit(1);
 	}
-	if (pkgdev.mount) {
-		if (n = pkgmount(&pkgdev, NULL, 0, 0, 1))
-			quit(n);
-	}
-
 	/*
 	 * convert prototype file to a pkgmap, while locating
 	 * package objects in the current environment
@@ -588,13 +582,6 @@ main(int argc, char *argv[])
 		npkgs++;
 	(void) fpkginst(NULL); /* free resource usage */
 
-	if (nparts > 1) {
-		if (pkgdev.mount && npkgs) {
-			progerr(gettext(ERR_ONEVOL));
-			quit(1);
-		}
-	}
-
 	/*
 	 *  update pkgmap entry for pkginfo file, since it may
 	 *  have changed due to command line or failure to
@@ -614,37 +601,15 @@ main(int argc, char *argv[])
 		}
 	}
 
-	if (nparts > 1)
-		(void) fprintf(stderr, gettext(MSG_PACKAGEM), nparts);
-	else
-		(void) fprintf(stderr, gettext(MSG_PACKAGE1));
+	(void) fprintf(stderr, gettext(MSG_PACKAGE1));
 
-	for (part = 1; part <= nparts; part++) {
-		if ((part > 1) && pkgdev.mount) {
-			if (pkgumount(&pkgdev)) {
-				progerr(gettext(ERR_UMOUNT), pkgdev.mount);
-				quit(99);
-			}
-			if (n = pkgmount(&pkgdev, NULL, part, nparts, 1))
-				quit(n);
-			(void) rrmdir(pkgloc);
-			if (mkdir(pkgloc, 0555)) {
-				progerr(gettext(ERR_MKDIR), pkgloc);
-				quit(99);
-			}
-		}
-		outvol(eptlist, eptnum, part, nparts);
+	outvol(eptlist, eptnum);
 
-		/* Validate (as much as possible) the control scripts. */
-		if (part == 1) {
-			char inst_path[PATH_MAX];
-
-			(void) fprintf(stderr, gettext(MSG_VALSCRIPTS));
-			(void) snprintf(inst_path, sizeof (inst_path),
-					"%s/install", pkgloc);
-			checkscripts(inst_path, 0);
-		}
-	}
+	/* Validate (as much as possible) the control scripts. */
+	(void) fprintf(stderr, gettext(MSG_VALSCRIPTS));
+	(void) snprintf(inst_path, sizeof (inst_path),
+			"%s/install", pkgloc);
+	checkscripts(inst_path, 0);
 
 	quit(0);
 	/*NOTREACHED*/
@@ -667,36 +632,31 @@ trap(int n)
 }
 
 static void
-outvol(struct cfent **eptlist, int eptnum, int part, int nparts)
+outvol(struct cfent **eptlist, int eptnum)
 {
 	FILE	*fp;
 	char	*svpt, *path, temp[PATH_MAX];
 	int	i;
 
-
-	if (nparts > 1)
-		(void) fprintf(stderr, gettext(" -- part %2d:\n"), part);
-	if (part == 1) {
-		/* re-write pkgmap, but exclude local pathnames */
-		(void) snprintf(temp, sizeof (temp), "%s/pkgmap", pkgloc);
-		if ((fp = fopen(temp, "w")) == NULL) {
+	/* re-write pkgmap, but exclude local pathnames */
+	(void) snprintf(temp, sizeof (temp), "%s/pkgmap", pkgloc);
+	if ((fp = fopen(temp, "w")) == NULL) {
+		progerr(gettext(ERR_TEMP), errno);
+		quit(99);
+	}
+	(void) fprintf(fp, ": %d %ld\n", 1, limit);
+	for (i = 0; eptlist[i]; i++) {
+		svpt = eptlist[i]->ainfo.local;
+		if (!strchr("sl", eptlist[i]->ftype))
+			eptlist[i]->ainfo.local = NULL;
+		if (ppkgmap(eptlist[i], fp)) {
 			progerr(gettext(ERR_TEMP), errno);
 			quit(99);
 		}
-		(void) fprintf(fp, ": %d %ld\n", nparts, limit);
-		for (i = 0; eptlist[i]; i++) {
-			svpt = eptlist[i]->ainfo.local;
-			if (!strchr("sl", eptlist[i]->ftype))
-				eptlist[i]->ainfo.local = NULL;
-			if (ppkgmap(eptlist[i], fp)) {
-				progerr(gettext(ERR_TEMP), errno);
-				quit(99);
-			}
-			eptlist[i]->ainfo.local = svpt;
-		}
-		(void) fclose(fp);
-		(void) fprintf(stderr, "%s\n", temp);
+		eptlist[i]->ainfo.local = svpt;
 	}
+	(void) fclose(fp);
+	(void) fprintf(stderr, "%s\n", temp);
 
 	(void) snprintf(temp, sizeof (temp), "%s/pkginfo", pkgloc);
 	if (copyf(svept->ainfo.local, temp, svept->cinfo.modtime))
@@ -704,7 +664,7 @@ outvol(struct cfent **eptlist, int eptnum, int part, int nparts)
 	(void) fprintf(stderr, "%s\n", temp);
 
 	for (i = 0; i < eptnum; i++) {
-		if (eptlist[i]->volno != part)
+		if (eptlist[i]->volno != 1)
 			continue;
 		if (strchr("dxslcbp", eptlist[i]->ftype))
 			continue;
@@ -716,7 +676,7 @@ outvol(struct cfent **eptlist, int eptnum, int part, int nparts)
 				eptlist[i]->path);
 			path = temp;
 		} else
-			path = srcpath(pkgloc, eptlist[i]->path, part, nparts);
+			path = srcpath(pkgloc, eptlist[i]->path);
 		if (sflag) {
 			if (slinkf(eptlist[i]->ainfo.local, path))
 				quit(1);

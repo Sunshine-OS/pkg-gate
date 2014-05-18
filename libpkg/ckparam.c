@@ -54,7 +54,7 @@ static int	proc_category(char *param, char *value);
 static int	bad_first_char(char *param, char *value);
 static int	not_alnum(char *param, char *pt);
 static int	not_ascii(char *param, char *pt);
-static int	too_long(char *param, char *pt, int len);
+static int	too_long(char *pt, int len);
 static int	isnull(char *param, char *pt);
 
 int
@@ -86,7 +86,7 @@ proc_name(char *param, char *value)
 	int ret_val;
 
 	if (!(ret_val = isnull(param, value))) {
-		ret_val += too_long(param, value, MAXLEN);
+		ret_val += too_long(value, MAXLEN);
 		ret_val += not_ascii(param, value);
 	}
 
@@ -103,7 +103,7 @@ proc_arch(char *param, char *value)
 		token = strtok(value, ", ");
 
 		while (token) {
-			ret_val += too_long(param, token, TOKLEN);
+			ret_val += too_long(token, TOKLEN);
 			ret_val += not_ascii(param, token);
 			token = strtok(NULL, ", ");
 		}
@@ -119,7 +119,7 @@ proc_version(char *param, char *value)
 
 	if (!(ret_val = isnull(param, value))) {
 		ret_val += bad_first_char(param, value);
-		ret_val += too_long(param, value, MAXLEN);
+		ret_val += too_long(value, MAXLEN);
 		ret_val += not_ascii(param, value);
 	}
 
@@ -136,7 +136,7 @@ proc_category(char *param, char *value)
 		token = strtok(value, ", ");
 
 		while (token) {
-			ret_val += too_long(param, token, TOKLEN);
+			ret_val += too_long(token, TOKLEN);
 			ret_val += not_alnum(param, token);
 			token = strtok(NULL, ", ");
 		}
@@ -167,7 +167,7 @@ isnull(char *param, char *pt)
 }
 
 static int
-too_long(char *param, char *pt, int len)
+too_long(char *pt, int len)
 {
 	if (strlen(pt) > (size_t)len) {
 		progerr(pkg_gt(ERR_LEN), pt);

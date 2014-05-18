@@ -45,7 +45,7 @@
 #include <fcntl.h>
 
 char *
-srcpath(char *d, char *p, int part, int nparts)
+srcpath(char *d, char *p)
 {
 	static char tmppath[PATH_MAX];
 	char	*copy;
@@ -64,14 +64,8 @@ srcpath(char *d, char *p, int part, int nparts)
 		copyLen = sizeof (tmppath);
 	}
 
-	if (nparts > 1) {
-		(void) snprintf(copy, copyLen,
-			((p[0] == '/') ? "/root.%d%s" : "/reloc.%d/%s"),
-			part, p);
-	} else {
-		(void) snprintf(copy, copyLen,
-			((p[0] == '/') ? "/root%s" : "/reloc/%s"), p);
-	}
+	(void) snprintf(copy, copyLen,
+		((p[0] == '/') ? "/root%s" : "/reloc/%s"), p);
 
 	return (tmppath);
 }

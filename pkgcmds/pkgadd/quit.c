@@ -320,8 +320,6 @@ quit(int a_retcode)
 		}
 #endif
 		(void) ds_close(1);
-	} else if (pkgdev.mount) {
-		(void) pkgumount(&pkgdev);
 	}
 
 	/*

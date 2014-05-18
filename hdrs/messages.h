@@ -697,8 +697,6 @@ extern "C" {
 #define	INFO_RMSPOOL			gettext("\nRemoving spooled package instance <%s>")
 #define	INFO_SPOOLED			gettext("\nThe following package is currently spooled:")
 
-#define	LOG_GETVOL_RET			gettext("getvol() returned <%d>")
-
 #define	MSG_1MORETODO			gettext("\nThere is 1 more package to be removed.")
 #define	MSG_1MORE_INST			gettext("\nThere is 1 more package to be installed.")
 #define	MSG_1MORE_PROC			gettext("\nThere is 1 more package to be processed.")

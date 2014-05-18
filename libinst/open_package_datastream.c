@@ -126,27 +126,11 @@ open_package_datastream(int a_argc, char **a_argv, char *a_spoolDir,
 
 	/*
 	 * Determine how to access the package source "device":
-	 * - if a block device is associated with the source:
-	 * -- make sure the next "volume" is mounted and ready.
-	 * -- input data stream is associated character device
-	 * - if char device but no block device associated with device:
-	 * -- input data stream is associated character device
 	 * - else if a path is associated with device:
-	 * -- input data stream is associated path
+	 * -- block/char device support is gone
 	 */
 
-	if (a_pkgdev->bdevice != (char *)NULL) {
-		/* package source is block device */
-		progerr(ERR_PKGVOL);
-		logerr(LOG_GETVOL_RET, n);
-		quit(99);
-	} else if (a_pkgdev->cdevice != (char *)NULL) {
-		/* package source is character device */
-
-		echoDebug(DBG_ODS_DATASTREAM_CDEV, a_pkgdev->cdevice);
-
-		(*r_idsName) = a_pkgdev->cdevice;
-	} else if (a_pkgdev->pathname != (char *)NULL) {
+	if (a_pkgdev->pathname != (char *)NULL) {
 		/* package source is path name to file */
 
 		echoDebug(DBG_ODS_DATASTREAM_ISFILE, a_pkgdev->pathname);
@@ -186,41 +170,11 @@ open_package_datastream(int a_argc, char **a_argv, char *a_spoolDir,
 	}
 
 	/*
-	 * mount source device (e.g. floppy) if no input data stream
-	 * specified, and the package source device is mountable. If
-	 * the pkgmount fails, go back and try to mount the package
-	 * source again. When a package is split up into multiple
-	 * volumes (such as floppies), it might be possible to go back
-	 * and insert a different copy of the required volume/floppy
-	 * if the current one cannot be mounted. Otherwise this could
-	 * have just called quit() if the mount failed...
-	 */
-
-	if (((*r_idsName) == (char *)NULL) && a_pkgdev->mount) {
-		echoDebug(DBG_ODS_DATASTREAM_MOUNTING, *r_idsName,
-							a_pkgdev->mount);
-		a_pkgdev->rdonly++;
-		n = pkgmount(a_pkgdev, NULL, 0, 0, 0);
-		if (n != 0) {
-			/* pkgmount failed */
-			return (B_FALSE);
-		}
-	}
-
-	/*
 	 * open and initialize input data stream if specified
 	 */
 
 	if ((*r_idsName) != (char *)NULL) {
 		echoDebug(DBG_ODS_DATASTREAM_INIT, *r_idsName);
-
-		/* use character device to force rewind of datastream */
-		if ((a_pkgdev->cdevice != (char *)NULL) &&
-			(a_pkgdev->bdevice == (char *)NULL)) {
-			progerr(ERR_PKGVOL);
-			logerr(LOG_GETVOL_RET, n);
-			quit(99);
-		}
 
 		if (chdir(a_pkgdev->dirname)) {
 			progerr(ERR_CHDIR, a_pkgdev->dirname);

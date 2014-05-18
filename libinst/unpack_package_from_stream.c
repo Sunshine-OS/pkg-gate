@@ -148,13 +148,6 @@ unpack_package_from_stream(char *a_idsName, char *a_pkginst, char *a_tempDir)
 		return (B_FALSE);
 	}
 
-	dparts--;
-	if (ds_next(a_idsName, instdir)) {
-		progerr(ERR_UNPACK_DSREAD, dparts+1, a_idsName, instdir,
-			a_pkginst);
-		return (B_FALSE);
-	}
-
 	if (chdir(get_PKGADM())) {
 		progerr(gettext(ERR_CHDIR), get_PKGADM());
 		return (B_FALSE);

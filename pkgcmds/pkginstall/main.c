@@ -137,7 +137,6 @@ static int	nointeract = 0;
 
 char		*msgtext;
 char		*pkginst = (char *)NULL;
-char		*rw_block_size = NULL;
 char		ilockfile[PATH_MAX];
 char		instdir[PATH_MAX];
 char		saveSpoolInstallDir[PATH_MAX];
@@ -351,7 +350,7 @@ main(int argc, char *argv[])
 	/* parse command line options */
 
 	while ((c = getopt(argc, argv,
-		"?Aa:B:b:Cc:D:d:eFf:GhIiMm:N:nO:p:R:r:StV:vz")) != EOF) {
+		"?Aa:B:b:Cc:D:d:GhIiM:N:nO:R:r:StV:vz")) != EOF) {
 
 		switch (c) {
 
@@ -377,15 +376,6 @@ main(int argc, char *argv[])
 		 */
 		case 'a':
 			admnfile = flex_device(optarg, 0);
-			break;
-
-		/*
-		 * Same as pkgadd: control block size given to
-		 * pkginstall - block size used in read()/write() loop;
-		 * default is st_blksize from stat() of source file.
-		 */
-		case 'B':
-			rw_block_size = optarg;
 			break;
 
 		/*
@@ -440,29 +430,10 @@ main(int argc, char *argv[])
 		/*
 		 * Same as pkgadd: Install or copy a package from
 		 * device. device can be a full path name to a directory
-		 * or the identifiers for tape, floppy disk, or removable
-		 * disk - for example, /var/tmp or /floppy/floppy_name.
-		 * It can also be a device alias - for example,
-		 * /floppy/floppy0, or a datastream created by pkgtrans.
+		 * or a datastream created by pkgtrans.
 		 */
 		case 'd':
 			device = flex_device(optarg, 1);
-			break;
-
-		/*
-		 * Different from pkgadd: disable the 32 char name
-		 * limit extension
-		 */
-		case 'e':
-			(void) set_ABI_namelngth();
-			break;
-
-		/*
-		 * Different from pkgadd: specify file system type for
-		 * the package device. Must be used with -m.
-		 */
-		case 'f':
-			pkgdev.fstyp = optarg;
 			break;
 
 		/*
@@ -515,17 +486,6 @@ main(int argc, char *argv[])
 		case 'M':
 			map_client = 0;
 			break;
-
-		/*
-		 * Different from pkgadd: specify device to use for package
-		 * source.
-		 */
-		case 'm':
-			pkgdev.mount = optarg;
-			pkgdev.rdonly++;
-			pkgdev.mntflg++;
-			break;
-
 		/*
 		 * Different from pkgadd: specify program name to use
 		 * for messages.
@@ -695,13 +655,6 @@ main(int argc, char *argv[])
 			break;
 
 		/*
-		 * Different from pkgadd: specify number of parts to package.
-		 */
-		case 'p':
-			dparts = ds_getinfo(optarg);
-			break;
-
-		/*
 		 * Same as pkgadd: Define the full path name of a
 		 * directory to use as the root_path.  All files,
 		 * including package system information files, are
@@ -836,19 +789,7 @@ main(int argc, char *argv[])
 	/* if device specified, set appropriate device in pkgdev */
 
 	if (device) {
-		if (pkgdev.mount) {
-			pkgdev.bdevice = device;
-		} else {
-			pkgdev.cdevice = device;
-		}
-	}
-
-	/* if file system type specified, must have a device to mount */
-
-	if (pkgdev.fstyp && !pkgdev.mount) {
-		progerr(ERR_F_REQUIRES_M);
-		usage();
-		/*NOTREACHED*/
+		pkgdev.cdevice = device;
 	}
 
 	/* BEGIN DATA GATHERING PHASE */
@@ -1494,14 +1435,6 @@ main(int argc, char *argv[])
 		(void) fprintf(stdout, "ckrunlevel=%d\n", r);
 	}
 
-	if (pkgdev.cdevice) {
-		/* get first volume which contains info files */
-		unpack();
-		if (!suppressCopyright) {
-			copyright();
-		}
-	}
-
 	/* update the lock - at the request script */
 
 	lockupd("request");
@@ -2019,10 +1952,8 @@ main(int argc, char *argv[])
 	 */
 
 	part = 1;
+	nparts = 1; /* fixme */
 	while (part <= nparts) {
-		if ((part > 1) && pkgdev.cdevice) {
-			unpack();
-		}
 
 		instvol(extlist, srcinst, part, nparts,
 			&cfVfp, &cfTmpVfp, &updated,
@@ -2618,12 +2549,6 @@ cp_pkgdirs(void)
 static void
 do_pkgask(boolean_t a_run_request_as_root)
 {
-	if (pkgdev.cdevice) {
-		unpack();
-		if (!suppressCopyright) {
-			copyright();
-		}
-	}
 	(void) snprintf(path, sizeof (path), "%s/%s", instdir, REQUEST_FILE);
 	if (access(path, F_OK)) {
 		progerr(ERR_NOREQUEST);
@@ -2784,60 +2709,6 @@ rdonly(char *p)
 			return (1);
 	}
 	return (0);
-}
-
-static void
-unpack(void)
-{
-	/*
-	 * read in next part from stream, even if we decide
-	 * later that we don't need it
-	 */
-	if (dparts < 1) {
-		progerr(ERR_DSTREAMCNT);
-		quit(99);
-		/*NOTREACHED*/
-	}
-	if ((access(instdir, F_OK) == 0) && rrmdir(instdir)) {
-		progerr(ERR_RMDIR, instdir);
-		quit(99);
-		/*NOTREACHED*/
-	}
-	if (mkdir(instdir, 0755)) {
-		progerr(ERR_MKDIR, instdir);
-		quit(99);
-		/*NOTREACHED*/
-	}
-	if (chdir(instdir)) {
-		progerr(ERR_CHDIR, instdir);
-		quit(99);
-		/*NOTREACHED*/
-	}
-	if (!ds_fd_open()) {
-		char *pkgabrv[2];
-
-		pkgabrv[0] = srcinst;
-		pkgabrv[1] = NULL;
-
-		if (ds_init(pkgdev.cdevice, pkgabrv, NULL)) {
-			progerr(ERR_DSINIT, pkgdev.cdevice);
-			quit(99);
-			/*NOTREACHED*/
-		}
-	}
-
-	dparts--;
-
-	if (ds_next(pkgdev.cdevice, instdir)) {
-		progerr(ERR_DSTREAM);
-		quit(99);
-		/*NOTREACHED*/
-	}
-	if (chdir(get_PKGADM())) {
-		progerr(ERR_CHDIR, get_PKGADM());
-		quit(99);
-		/*NOTREACHED*/
-	}
 }
 
 static void

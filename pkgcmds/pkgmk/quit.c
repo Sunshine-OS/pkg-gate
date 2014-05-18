@@ -70,9 +70,6 @@ quit(int retcode)
 	if (retcode && started)
 		(void) rrmdir(pkgloc); /* clean up output directory */
 
-	if (pkgdev.mount)
-		(void) pkgumount(&pkgdev);
-
 	if (t_pkgmap)
 		(void) unlink(t_pkgmap);
 	if (t_pkginfo)

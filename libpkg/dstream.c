@@ -66,7 +66,6 @@ extern int	pkgnmchk(register char *pkg, register char *spec,
 
 #define	CMDSIZ	512
 #define	LSIZE	128
-#define	DDPROC		BINDIR "/dd"
 #define	CPIOPROC	BINDIR "/cpio"
 
 struct dstoc {
@@ -97,11 +96,7 @@ static char	ds_volnos[128]; 	/* parts/volume info */
 static char	*ds_device;
 static int	ds_volpart;	/* number of parts read in current volume, */
 						/* including skipped parts */
-static int	ds_bufsize = BLK_SIZE;
-static int	ds_skippart; 	/* number of parts skipped in current volume */
-
-static int	ds_getnextvol(char *device);
-static int	ds_skip(char *device, int nskip);
+static int	ds_skip(int nskip);
 
 void
 ds_order(char *list[])
@@ -168,37 +163,6 @@ ds_gets(char *buf, int size)
 }
 
 /*
- * function to determine if media is datastream or mounted
- * floppy
- */
-int
-ds_readbuf(char *device)
-{
-	char buf[BLK_SIZE];
-
-	if (ds_fd >= 0)
-		(void) close(ds_fd);
-	if ((ds_fd = open(device, O_RDONLY | O_LARGEFILE)) >= 0 &&
-	    read(ds_fd, buf, BLK_SIZE) == BLK_SIZE &&
-	    strncmp(buf, HDR_PREFIX, 20) == 0) {
-		if ((ds_header = (char *)calloc(BLK_SIZE, 1)) == NULL) {
-			progerr(pkg_gt(ERR_UNPACK));
-			logerr(pkg_gt(MSG_MEM));
-			(void) ds_close(0);
-			return (0);
-		}
-		memcpy(ds_header, buf, BLK_SIZE);
-		ds_headsize = BLK_SIZE;
-
-		return (1);
-	} else if (ds_fd >= 0) {
-		(void) close(ds_fd);
-		ds_fd = -1;
-	}
-	return (0);
-}
-
-/*
  * Determine how many additional volumes are needed for current package.
  * Note: a 0 will occur as first volume number when the package begins
  * on the next volume.
@@ -238,30 +202,6 @@ ds_pkginit(void)
 }
 
 /*
- * functions to pass current package info to exec'ed program
- */
-void
-ds_putinfo(char *buf)
-{
-	(void) sprintf(buf, "%d %d %d %d %d %d %d %d %d %ld %s",
-	    ds_fd, ds_realfd, ds_volcnt, ds_volno, ds_totread, ds_volpart,
-	    ds_skippart, ds_bufsize, ds_toc->nparts, ds_toc->maxsiz,
-	    ds_toc->volnos);
-}
-
-int
-ds_getinfo(char *string)
-{
-	ds_toc = (struct dstoc *)calloc(1, sizeof (struct dstoc));
-	(void) sscanf(string, "%d %d %d %d %d %d %d %d %d %ld %[ 0-9]",
-	    &ds_fd, &ds_realfd, &ds_volcnt, &ds_volno, &ds_totread,
-	    &ds_volpart, &ds_skippart, &ds_bufsize, &ds_toc->nparts,
-	    &ds_toc->maxsiz, ds_toc->volnos);
-	ds_pkginit();
-	return (ds_toc->nparts);
-}
-
-/*
  * Return true if the file descriptor (ds_fd) is open on the package stream.
  */
 boolean_t
@@ -280,7 +220,7 @@ ds_init(char *device, char **pkg, char *norewind)
 	char	*ret;
 	char	cmd[CMDSIZ];
 	char	line[LSIZE+1];
-	int	i, n, count = 0, header_size = BLK_SIZE;
+	int	i, n, header_size = BLK_SIZE;
 
 	if (!ds_header) { 	/* If the header hasn't been read yet */
 		if (ds_fd >= 0)
@@ -310,45 +250,12 @@ ds_init(char *device, char **pkg, char *norewind)
 		}
 
 		/*
-		 * This loop scans the medium for the start of the header.
-		 * If the above read worked, we skip this. If it did't, this
-		 * loop will retry the read ten times looking for the header
-		 * marker string.
+		 * Check for a header
 		 */
-		while (strncmp(ds_header, HDR_PREFIX, 20) != 0) {
-			/* only ten tries iff the device rewinds */
-			if (!norewind || count++ > 10) {
-				progerr(pkg_gt(ERR_UNPACK));
-				logerr(pkg_gt(MSG_TOC));
-				(void) ds_close(0);
-				return (-1);
-			}
-
-			/* read through to the last block */
-			if (count > 1)
-				while (read(ds_fd, ds_header, BLK_SIZE) > 0)
-					;
-
-			/* then close the device */
-			(void) ds_close(0);
-
-			/* and reopen it */
-			if ((ds_fd = open(norewind, O_RDONLY
-			    | O_LARGEFILE)) < 0) {
-				progerr(pkg_gt(ERR_UNPACK));
-				logerr(pkg_gt(MSG_OPEN), device, errno);
-				(void) free(ds_header);
-				return (-1);
-			}
-
-			/* read the block again */
-			if (read(ds_fd, ds_header, BLK_SIZE) != BLK_SIZE) {
-				rpterr();
-				progerr(pkg_gt(ERR_UNPACK));
-				logerr(pkg_gt(MSG_TOC));
-				(void) ds_close(0);
-				return (-1);
-			}
+		if (strncmp(ds_header, HDR_PREFIX, 20) != 0) {
+			progerr(pkg_gt(ERR_UNPACK));
+			logerr(pkg_gt(MSG_TOC));
+			return (-1);
 		}
 
 		/* Now keep scanning until the whole header is in place. */
@@ -379,12 +286,6 @@ ds_init(char *device, char **pkg, char *norewind)
 				header_size += BLK_SIZE;	/* new size */
 		}
 
-		/*
-		 * remember rewind device for ds_close to rewind at
-		 * close
-		 */
-		if (count >= 1)
-			ds_device = device;
 		ds_headsize = header_size;
 
 	}
@@ -487,7 +388,7 @@ int
 ds_findpkg(char *device, char *pkg)
 {
 	char	*pkglist[2];
-	int	nskip, ods_volpart;
+	int	nskip;
 
 	if (ds_head == NULL) {
 		pkglist[0] = pkg;
@@ -520,23 +421,12 @@ ds_findpkg(char *device, char *pkg)
 	}
 
 	ds_pkginit();
-	ds_skippart = 0;
-	if (ds_curpartcnt > 0) {
-		ods_volpart = ds_volpart;
-		/*
-		 * skip past archives belonging to last package on current
-		 * volume
-		 */
-		if (ds_volpart > 0 && ds_getnextvol(device))
-			return (-1);
-		ds_totread = nskip - ods_volpart;
-		if (ds_skip(device, ods_volpart))
-			return (-1);
-	} else if (ds_curpartcnt < 0) {
-		if (ds_skip(device, nskip - ds_totread))
+	if (ds_curpartcnt < 0) {
+		if (ds_skip(nskip - ds_totread))
 			return (-1);
 	} else
 		ds_totread = nskip;
+
 	ds_read = 0;
 	return (ds_nparts);
 }
@@ -548,7 +438,7 @@ ds_findpkg(char *device, char *pkg)
  */
 
 int
-ds_getpkg(char *device, int n, char *dstdir)
+ds_getpkg(int n)
 {
 	struct statvfs svfsb;
 	unsigned long long free_blocks;
@@ -576,23 +466,6 @@ ds_getpkg(char *device, int n, char *dstdir)
 			return (-1);
 		}
 	}
-	return (ds_next(device, dstdir));
-}
-
-static int
-ds_getnextvol(char *device)
-{
-	char prompt[128];
-	int n;
-
-	if (ds_close(0))
-		return (-1);
-	(void) sprintf(prompt,
-	    pkg_gt("Insert %%v %d of %d into %%p"),
-	    ds_volno, ds_volcnt);
-	if ((ds_fd = open(device, O_RDONLY | O_LARGEFILE)) < 0)
-		return (-1);
-	ds_volpart = 0;
 	return (0);
 }
 
@@ -601,7 +474,7 @@ ds_getnextvol(char *device)
  * in current volume
  */
 static int
-ds_skip(char *device, int nskip)
+ds_skip(int nskip)
 {
 	char	cmd[CMDSIZ];
 	int	n, onskip = nskip;
@@ -617,13 +490,10 @@ ds_skip(char *device, int nskip)
 			nskip = onskip;
 			if (ds_volno == 1 || ds_volpart > 0)
 				return (n);
-			if (n = ds_getnextvol(device))
-				return (n);
 		}
 	}
 	ds_totread += onskip;
 	ds_volpart = onskip;
-	ds_skippart = onskip;
 	return (0);
 }
 
@@ -632,51 +502,7 @@ void
 ds_skiptoend(char *device)
 {
 	if (ds_read < ds_nparts && ds_curpartcnt < 0)
-		(void) ds_skip(device, ds_nparts - ds_read);
-}
-
-int
-ds_next(char *device, char *instdir)
-{
-	char	cmd[CMDSIZ], tmpvol[128];
-	int	nparts, n, index;
-
-	/*CONSTCOND*/
-	while (1) {
-		if (ds_read + 1 > ds_curpartcnt && ds_curpartcnt >= 0) {
-			ds_volno++;
-			if (n = ds_getnextvol(device))
-				return (n);
-			(void) sscanf(ds_volnos, "%d %[ 0-9]", &index, tmpvol);
-			(void) strcpy(ds_volnos, tmpvol);
-			ds_curpartcnt += index;
-		}
-		(void) sprintf(cmd, "%s -icdumD -C %d",
-		    CPIOPROC, (int)BLK_SIZE);
-		if (n = esystem(cmd, ds_fd, -1)) {
-			rpterr();
-			progerr(pkg_gt(ERR_UNPACK));
-			logerr(pkg_gt(MSG_CMDFAIL), cmd, n);
-		}
-		if (ds_read == 0)
-			nparts = 0;
-		else
-			nparts = ds_toc->nparts;
-		if (n || (n = ckvolseq(instdir, ds_read + 1, nparts))) {
-			if (ds_volno == 1 || ds_volpart > ds_skippart)
-				return (-1);
-
-			if (n = ds_getnextvol(device))
-				return (n);
-			continue;
-		}
-		ds_read++;
-		ds_totread++;
-		ds_volpart++;
-
-		return (0);
-	}
-	/*NOTREACHED*/
+		(void) ds_skip(ds_nparts - ds_read);
 }
 
 /*

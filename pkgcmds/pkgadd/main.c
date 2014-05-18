@@ -149,7 +149,6 @@ static char	*pkgcontsrc = NULL;	/* continuation file (-c option) */
 static char	*pkgdrtarg = NULL;	/* dry run file (-D option) */
 static char	*pkginst = NULL;	/* current pkg/src instance 2 process */
 static char	*respdir = NULL;	/* respfile is a directory spec */
-static char	*rw_block_size = NULL;
 static char	*vfstab_file = NULL;
 static int	askflag = 0;		/* non-zero if invoked as "pkgask" */
 static int	disableAttributes = 0;	/* Disabling attribute checking */
@@ -413,15 +412,6 @@ main(int argc, char **argv)
 		 */
 		case 'a':
 			admnfile = flex_device(optarg, 0);
-			break;
-
-		/*
-		 * Not a public interface: control block size given to
-		 * pkginstall - block size used in read()/write() loop;
-		 * default is st_blksize from stat() of source file.
-		 */
-		case 'B':
-			rw_block_size = optarg;
 			break;
 
 		/*
@@ -1334,8 +1324,6 @@ main(int argc, char **argv)
 			keystore_file, ids_name, &repeat);
 
 		if (b == B_FALSE) {
-			char	path[PATH_MAX];
-
 			echoDebug(DBG_CANNOT_GET_PKGLIST);
 
 			progerr(ERR_NOPKGS, pkgdev.dirname);
@@ -2120,7 +2108,6 @@ pkgInstall(char *a_altRoot, char *a_idsName, char *a_pkgDir, char *a_altBinDir,
 	char	*arg[MAXARGS];
 	char	*p;
 	char	path[PATH_MAX];
-	char	buffer[256];
 	int	n, nargs, dparts = 0;
 
 	/* entry debugging info */
@@ -2189,13 +2176,6 @@ pkgInstall(char *a_altRoot, char *a_idsName, char *a_pkgDir, char *a_altBinDir,
 	if (a_altBinDir != (char *)NULL) {
 		arg[nargs++] = "-b";
 		arg[nargs++] = a_altBinDir;
-	}
-
-	/* pkgadd -B blocksize: pass -B to pkginstall */
-
-	if (rw_block_size != NULL) {
-		arg[nargs++] = "-B";
-		arg[nargs++] = rw_block_size;
 	}
 
 	/* pkgadd -C: pass -C to pkginstall: disable checksum */
@@ -2312,9 +2292,7 @@ pkgInstall(char *a_altRoot, char *a_idsName, char *a_pkgDir, char *a_altBinDir,
 
 	/*
 	 * If input data stream is available,
-	 * - add: -d ids_name -p number_of_parts
-	 * else,
-	 * - add: -d device -m mount [-f type]
+	 * - add: -d device
 	 */
 
 	if (a_idsName != NULL) {
@@ -2326,19 +2304,7 @@ pkgInstall(char *a_altRoot, char *a_idsName, char *a_pkgDir, char *a_altBinDir,
 			quit(1);
 			/* NOTREACHED */
 		}
-		arg[nargs++] = "-p";
 		ds_close(0);
-		ds_putinfo(buffer);
-		arg[nargs++] = buffer;
-	} else if (pkgdev.mount != NULL) {
-		arg[nargs++] = "-d";
-		arg[nargs++] = pkgdev.bdevice;
-		arg[nargs++] = "-m";
-		arg[nargs++] = pkgdev.mount;
-		if (pkgdev.fstyp != NULL) {
-			arg[nargs++] = "-f";
-			arg[nargs++] = pkgdev.fstyp;
-		}
 	}
 
 	/* add all inherited file systems */
@@ -4139,11 +4105,6 @@ static	char		*zoneAdminFile = (char *)NULL;
 
 		if ((npkgs <= 0) && (pkgdev.mount || a_idsName)) {
 			(void) chdir("/");
-			if (!a_idsName) {
-				echoDebug(DBG_UNMOUNTING_DEV,
-							PSTR(pkgdev.mount));
-				(void) pkgumount(&pkgdev);
-			}
 		}
 	}
 
@@ -4320,9 +4281,6 @@ static	char		*zoneTempDir = (char *)NULL;
 
 		if ((npkgs <= 0) && (pkgdev.mount || a_idsName)) {
 			(void) chdir("/");
-			if (!a_idsName) {
-				(void) pkgumount(&pkgdev);
-			}
 		}
 	}
 
@@ -4475,9 +4433,6 @@ add_packages_in_global_no_zones(char **a_pkgList, char *a_uri,
 
 		if ((npkgs <= 0) && (pkgdev.mount || a_idsName)) {
 			(void) chdir("/");
-			if (!a_idsName) {
-				(void) pkgumount(&pkgdev);
-			}
 		}
 	}
 
